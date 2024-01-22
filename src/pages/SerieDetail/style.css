@@ -1,0 +1,31 @@
+.featured {
+    height: 100vh;
+}
+
+.featured--vertical {
+    width: inherit;
+    height: inherit;
+    background: linear-gradient(to top, #111 10%, transparent 90%);
+}
+
+.featured--horizontal {
+    width: inherit;
+    height: inherit;
+    background: linear-gradient(to right, #111 30%, transparent 70%);
+}
+
+.featured--name {
+    font-size: 60px;
+    font-weight: bold;
+}
+
+.featured--year {
+    font-size: 32px;
+    font-weight: bold;
+}
+
+.featured--plot {
+    font-size: 18px;
+    font-weight: bold;
+    margin-top: 15px;
+}

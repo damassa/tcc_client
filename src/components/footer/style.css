@@ -1,0 +1,51 @@
+footer {
+    background-color: #33202A;
+    height: 130px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 30px;
+}
+
+.footer--left {
+    font-size: 24px;
+    font-weight: bold;
+    height: 70px;
+}
+
+.footer--left span {
+    font-size: 16px;
+    font-weight: lighter;
+}
+
+.footer--right {
+    height: 70px;
+}
+
+.footer--myAccount {
+    background-color: #6F886F;
+    border: none;
+    border-radius: 5px;
+    color: #0a0a0a;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-family: 'Fira Sans', sans-serif;
+    font-size: 13px;
+    font-weight: bold;
+    margin: 4px 2px;
+    cursor: pointer;
+}
+
+.footer--social {
+    height: 35px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.footer--social a {
+    text-decoration: none;
+    color: #f6f6f6;
+}

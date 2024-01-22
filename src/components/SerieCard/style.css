@@ -1,0 +1,62 @@
+.serieCard {
+    margin-bottom: 30px;
+}
+
+.serieCard h2 {
+    margin: 0px 0px 0px 30px;
+}
+
+.serieCard--listarea {
+    overflow-x: hidden;
+    padding-left: 30px;
+}
+
+.serieCard--list {
+    width: 999999999px;
+    transition: all ease 0.5s;
+}
+
+.serieCard--item {
+    display: inline-block;
+    width: 150px;
+    cursor: pointer;
+}
+
+.serieCard--item img {
+    width: 100%;
+    transform: scale(0.9);
+    transition: ease 0.2s;
+}
+
+.serieCard--item img:hover {
+    transform: scale(1);
+}
+
+.serieCard--arrowLeft,
+.serieCard--arrowRight {
+    position: absolute;
+    width: 50px;
+    height: 225px;
+    background-color: rgba(0, 0, 0, 0.6);
+    z-index: 99;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    cursor: pointer;
+    opacity: 0;
+    transition: all ease 0.5s;
+}
+
+.serieCard--arrowLeft {
+    left: 0;
+}
+
+.serieCard--arrowRight {
+    right: 0;
+}
+
+.serieCard:hover .serieCard--arrowLeft,
+.serieCard:hover, .serieCard--arrowRight {
+    opacity: 1;
+}

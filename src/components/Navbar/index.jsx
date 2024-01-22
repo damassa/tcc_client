@@ -1,41 +1,19 @@
-import React, {useEffect, useState} from 'react';
-import {FaSearch, FaBell, FaGift, FaCaretDown} from 'react-icons/fa';
+import React from 'react';
 
-import {Container, RoutesMenu, Profile} from './styles';
+import './style.css';
 
-
-const Navbar = () => {
-    const [isBlack, setIsBlack] = useState(false);
-
-    useEffect(() => {
-        window.addEventListener('scroll', () => setIsBlack(window.scrollY > 10));
-
-        return () => {
-            window.removeEventListener('scroll', () => setIsBlack(window.scrollY > 10),);
-        };
-    }, []);
-
+const Navbar = ({ purple }) => {
   return (
-    <Container isBlack={isBlack}>
-        <RoutesMenu>
-            <p>LOGO</p>
-            <ul>
-                <li style={{fontWeight: 'bold'}}>Início</li>
-                <li>Blablabla</li>
-                <li>ADADADA</li>
-                <li>HAHA</li>
-                <li>Cocozão</li>
-            </ul>
-        </RoutesMenu>
-        <Profile>
-            <FaSearch />
-            <FaGift />
-            <FaBell />
-            <button type="button">
-                <FaCaretDown />
-            </button>
-        </Profile>
-    </Container>
+    <header className={purple ? 'purple' : ''}>
+        <div className='header--logo'>
+            <a href="/">World of Tokusatsu</a>
+        </div>
+        <a href="/">
+          <div className='header--user'>
+            FD
+          </div>
+        </a>
+    </header>
   );
 }
 
