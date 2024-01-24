@@ -1,0 +1,15 @@
+.myAccount {
+    background-color: #6F886F;
+    border: none;
+    border-radius: 5px;
+    color: #0a0a0a;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-family: 'Fira Sans', sans-serif;
+    font-size: 13px;
+    font-weight: bold;
+    margin: 4px 2px;
+    cursor: pointer;
+}

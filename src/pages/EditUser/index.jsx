@@ -4,7 +4,9 @@ import React from 'react';
 
 const EditUser = () => {
   return (
-    <div>Edit User</div>
+    <div>
+      <h1>Edit user</h1>
+    </div>
   );
 }
 

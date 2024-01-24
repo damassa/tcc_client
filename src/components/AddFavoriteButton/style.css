@@ -1,0 +1,15 @@
+.addFavorite {
+    background-color: #6F886F;
+    border: none;
+    border-radius: 5px;
+    color: #0a0a0a;
+    padding: 8px 25px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-family: 'Fira Sans', sans-serif;
+    font-size: 11px;
+    font-weight: bold;
+    margin: 4px 2px;
+    cursor: pointer;
+}

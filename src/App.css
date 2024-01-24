@@ -12,3 +12,12 @@ body {
     font-family: 'Fira Sans', sans-serif;
     overflow-x: hidden;
 }
+
+.standardInput {
+    font-family: 'Fira Sans', sans-serif;
+    font-size: 18px;
+    border-radius: 5px;
+    border: none;
+    padding: 15px 95px;
+    background-color: #f6f6f6;
+}

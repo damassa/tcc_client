@@ -20,9 +20,6 @@ const Home = () => {
             <div className="cards">
                 <SerieCard />
                 <SerieCard />
-                <SerieCard />
-                <SerieCard />
-                <SerieCard />
             </div>
             {/* <div className="loading">
                 <img src={loadingGIF} alt="Carregando" />

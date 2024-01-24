@@ -36,69 +36,83 @@ const SerieCard = () => {
                 <div className='serieCard--list' style={{
                     marginLeft: scrollX
                 }}>
-                    <div className='serieCard--item'>
-                        <img src="https://media.fstatic.com/y9en3f1_mvlP9mSZ_gAAhl0TSHE=/210x312/smart/filters:format(webp)/media/movies/covers/2010/01/ae29d514be77f161a1cedbcc4bbd3ec0.jpg" alt="Serie" />
-                    </div>
+                    <Link to="/detail">
+                        <div className='serieCard--item'>
+                            <img src="https://media.fstatic.com/y9en3f1_mvlP9mSZ_gAAhl0TSHE=/210x312/smart/filters:format(webp)/media/movies/covers/2010/01/ae29d514be77f161a1cedbcc4bbd3ec0.jpg" alt="Serie" />
+                        </div>
+                    </Link>
 
-                    <div className='serieCard--item'>
-                        <img src="https://media.fstatic.com/y9en3f1_mvlP9mSZ_gAAhl0TSHE=/210x312/smart/filters:format(webp)/media/movies/covers/2010/01/ae29d514be77f161a1cedbcc4bbd3ec0.jpg" alt="Serie" />
-                    </div>
+                    <Link to="/detail">
+                        <div className='serieCard--item'>
+                            <img src="https://media.fstatic.com/y9en3f1_mvlP9mSZ_gAAhl0TSHE=/210x312/smart/filters:format(webp)/media/movies/covers/2010/01/ae29d514be77f161a1cedbcc4bbd3ec0.jpg" alt="Serie" />
+                        </div>
+                    </Link>
 
-                    <div className='serieCard--item'>
-                        <img src="https://media.fstatic.com/y9en3f1_mvlP9mSZ_gAAhl0TSHE=/210x312/smart/filters:format(webp)/media/movies/covers/2010/01/ae29d514be77f161a1cedbcc4bbd3ec0.jpg" alt="Serie" />
-                    </div>
+                    <Link to="/detail">
+                        <div className='serieCard--item'>
+                            <img src="https://media.fstatic.com/y9en3f1_mvlP9mSZ_gAAhl0TSHE=/210x312/smart/filters:format(webp)/media/movies/covers/2010/01/ae29d514be77f161a1cedbcc4bbd3ec0.jpg" alt="Serie" />
+                        </div>
+                    </Link>
 
-                    <div className='serieCard--item'>
-                        <img src="https://media.fstatic.com/y9en3f1_mvlP9mSZ_gAAhl0TSHE=/210x312/smart/filters:format(webp)/media/movies/covers/2010/01/ae29d514be77f161a1cedbcc4bbd3ec0.jpg" alt="Serie" />
-                    </div>
+                    <Link to="/detail">
+                        <div className='serieCard--item'>
+                            <img src="https://media.fstatic.com/y9en3f1_mvlP9mSZ_gAAhl0TSHE=/210x312/smart/filters:format(webp)/media/movies/covers/2010/01/ae29d514be77f161a1cedbcc4bbd3ec0.jpg" alt="Serie" />
+                        </div>
+                    </Link>
 
-                    <div className='serieCard--item'>
-                        <img src="https://media.fstatic.com/y9en3f1_mvlP9mSZ_gAAhl0TSHE=/210x312/smart/filters:format(webp)/media/movies/covers/2010/01/ae29d514be77f161a1cedbcc4bbd3ec0.jpg" alt="Serie" />
-                    </div>
+                    <Link to="/detail">
+                        <div className='serieCard--item'>
+                            <img src="https://media.fstatic.com/y9en3f1_mvlP9mSZ_gAAhl0TSHE=/210x312/smart/filters:format(webp)/media/movies/covers/2010/01/ae29d514be77f161a1cedbcc4bbd3ec0.jpg" alt="Serie" />
+                        </div>
+                    </Link>
 
-                    <div className='serieCard--item'>
-                        <img src="https://media.fstatic.com/y9en3f1_mvlP9mSZ_gAAhl0TSHE=/210x312/smart/filters:format(webp)/media/movies/covers/2010/01/ae29d514be77f161a1cedbcc4bbd3ec0.jpg" alt="Serie" />
-                    </div>
+                    <Link to="/detail">
+                        <div className='serieCard--item'>
+                            <img src="https://media.fstatic.com/y9en3f1_mvlP9mSZ_gAAhl0TSHE=/210x312/smart/filters:format(webp)/media/movies/covers/2010/01/ae29d514be77f161a1cedbcc4bbd3ec0.jpg" alt="Serie" />
+                        </div>
+                    </Link>
 
-                    <div className='serieCard--item'>
-                        <img src="https://media.fstatic.com/y9en3f1_mvlP9mSZ_gAAhl0TSHE=/210x312/smart/filters:format(webp)/media/movies/covers/2010/01/ae29d514be77f161a1cedbcc4bbd3ec0.jpg" alt="Serie" />
-                    </div>
+                    <Link to="/detail">
+                        <div className='serieCard--item'>
+                            <img src="https://media.fstatic.com/y9en3f1_mvlP9mSZ_gAAhl0TSHE=/210x312/smart/filters:format(webp)/media/movies/covers/2010/01/ae29d514be77f161a1cedbcc4bbd3ec0.jpg" alt="Serie" />
+                        </div>
+                    </Link>
 
-                    <div className='serieCard--item'>
-                        <img src="https://media.fstatic.com/y9en3f1_mvlP9mSZ_gAAhl0TSHE=/210x312/smart/filters:format(webp)/media/movies/covers/2010/01/ae29d514be77f161a1cedbcc4bbd3ec0.jpg" alt="Serie" />
-                    </div>
+                    <Link to="/detail">
+                        <div className='serieCard--item'>
+                            <img src="https://media.fstatic.com/y9en3f1_mvlP9mSZ_gAAhl0TSHE=/210x312/smart/filters:format(webp)/media/movies/covers/2010/01/ae29d514be77f161a1cedbcc4bbd3ec0.jpg" alt="Serie" />
+                        </div>
+                    </Link>
 
-                    <div className='serieCard--item'>
-                        <img src="https://media.fstatic.com/y9en3f1_mvlP9mSZ_gAAhl0TSHE=/210x312/smart/filters:format(webp)/media/movies/covers/2010/01/ae29d514be77f161a1cedbcc4bbd3ec0.jpg" alt="Serie" />
-                    </div>
+                    <Link to="/detail">
+                        <div className='serieCard--item'>
+                            <img src="https://media.fstatic.com/y9en3f1_mvlP9mSZ_gAAhl0TSHE=/210x312/smart/filters:format(webp)/media/movies/covers/2010/01/ae29d514be77f161a1cedbcc4bbd3ec0.jpg" alt="Serie" />
+                        </div>
+                    </Link>
 
-                    <div className='serieCard--item'>
-                        <img src="https://media.fstatic.com/y9en3f1_mvlP9mSZ_gAAhl0TSHE=/210x312/smart/filters:format(webp)/media/movies/covers/2010/01/ae29d514be77f161a1cedbcc4bbd3ec0.jpg" alt="Serie" />
-                    </div>
+                    <Link to="/detail">
+                        <div className='serieCard--item'>
+                            <img src="https://media.fstatic.com/y9en3f1_mvlP9mSZ_gAAhl0TSHE=/210x312/smart/filters:format(webp)/media/movies/covers/2010/01/ae29d514be77f161a1cedbcc4bbd3ec0.jpg" alt="Serie" />
+                        </div>
+                    </Link>
 
-                    <div className='serieCard--item'>
-                        <img src="https://media.fstatic.com/y9en3f1_mvlP9mSZ_gAAhl0TSHE=/210x312/smart/filters:format(webp)/media/movies/covers/2010/01/ae29d514be77f161a1cedbcc4bbd3ec0.jpg" alt="Serie" />
-                    </div>
+                    <Link to="/detail">
+                        <div className='serieCard--item'>
+                            <img src="https://media.fstatic.com/y9en3f1_mvlP9mSZ_gAAhl0TSHE=/210x312/smart/filters:format(webp)/media/movies/covers/2010/01/ae29d514be77f161a1cedbcc4bbd3ec0.jpg" alt="Serie" />
+                        </div>
+                    </Link>
 
-                    <div className='serieCard--item'>
-                        <img src="https://media.fstatic.com/y9en3f1_mvlP9mSZ_gAAhl0TSHE=/210x312/smart/filters:format(webp)/media/movies/covers/2010/01/ae29d514be77f161a1cedbcc4bbd3ec0.jpg" alt="Serie" />
-                    </div>
+                    <Link to="/detail">
+                        <div className='serieCard--item'>
+                            <img src="https://media.fstatic.com/y9en3f1_mvlP9mSZ_gAAhl0TSHE=/210x312/smart/filters:format(webp)/media/movies/covers/2010/01/ae29d514be77f161a1cedbcc4bbd3ec0.jpg" alt="Serie" />
+                        </div>
+                    </Link>
 
-                    <div className='serieCard--item'>
-                        <img src="https://media.fstatic.com/y9en3f1_mvlP9mSZ_gAAhl0TSHE=/210x312/smart/filters:format(webp)/media/movies/covers/2010/01/ae29d514be77f161a1cedbcc4bbd3ec0.jpg" alt="Serie" />
-                    </div>
-
-                    <div className='serieCard--item'>
-                        <img src="https://media.fstatic.com/y9en3f1_mvlP9mSZ_gAAhl0TSHE=/210x312/smart/filters:format(webp)/media/movies/covers/2010/01/ae29d514be77f161a1cedbcc4bbd3ec0.jpg" alt="Serie" />
-                    </div>
-
-                    <div className='serieCard--item'>
-                        <img src="https://media.fstatic.com/y9en3f1_mvlP9mSZ_gAAhl0TSHE=/210x312/smart/filters:format(webp)/media/movies/covers/2010/01/ae29d514be77f161a1cedbcc4bbd3ec0.jpg" alt="Serie" />
-                    </div>
-
-                    <div className='serieCard--item'>
-                        <img src="https://media.fstatic.com/y9en3f1_mvlP9mSZ_gAAhl0TSHE=/210x312/smart/filters:format(webp)/media/movies/covers/2010/01/ae29d514be77f161a1cedbcc4bbd3ec0.jpg" alt="Serie" />
-                    </div>
+                    <Link to="/detail">
+                        <div className='serieCard--item'>
+                            <img src="https://media.fstatic.com/y9en3f1_mvlP9mSZ_gAAhl0TSHE=/210x312/smart/filters:format(webp)/media/movies/covers/2010/01/ae29d514be77f161a1cedbcc4bbd3ec0.jpg" alt="Serie" />
+                        </div>
+                    </Link>
                 </div>
             </div>
         </div>

@@ -1,5 +1,6 @@
 import React from 'react';
 import { FaInstagram, FaGithubSquare, FaLinkedin } from 'react-icons/fa';
+import MyAccountButton from '../MyAccountButton';
 
 import './style.css';
 
@@ -11,9 +12,7 @@ const Footer = () => {
             <span>World of Tokusatsu. All rights reserved.</span>
         </div>
         <div className='footer--right'>
-            <button className='footer--myAccount'>
-                Minha conta
-            </button>
+            <MyAccountButton />
             <div className='footer--social'>
                 <a href="http://instagram.com/damassaa" target='_blank' rel="noreferrer">
                     <FaInstagram />

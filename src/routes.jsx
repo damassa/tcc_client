@@ -6,6 +6,7 @@ import Navbar from './components/Navbar';
 import Footer from "./components/footer";
 import SerieDetail from "./pages/SerieDetail";
 import EditUser from "./pages/EditUser";
+import Login from "./pages/Login";
 
 const Routes = () => {
     const [purpleNav, setPurpleNav] = useState(false);
@@ -32,6 +33,7 @@ const Routes = () => {
                 <Route path="/" exact element={<Home />} />
                 <Route path="/detail" exact element={<SerieDetail />} />
                 <Route path="/edit" exact element={<EditUser />} />
+                <Route path="/login" exact element={<Login />} />
             </Switch>
             <Footer />
         </BrowserRouter>

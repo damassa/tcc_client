@@ -12,7 +12,7 @@
 }
 
 .serieCard--list {
-    width: 999999999px;
+    width: 999999999px; /* Tirar só quando tiver o backend pronto */
     transition: all ease 0.5s;
 }
 
