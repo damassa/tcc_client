@@ -8,9 +8,6 @@ const Navbar = ({ purple }) => {
         <div className='header--logo'>
             <a href="/">World of Tokusatsu</a>
         </div>
-        <div>
-          <input type="text" className='standardInput' placeholder='Pesquise aqui...' />
-        </div>
         <a href="/edit">
           <div className='header--user'>
             FD

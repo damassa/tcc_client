@@ -1,19 +1,37 @@
 .login--wrapper {
-    height: 100vh;
+    min-width: 500px;
+    padding: 30px;
+    display: block;
+    border-radius: 10px;
     display: flex;
-    align-items: center;
     justify-content: center;
-    width: 100vw;
+    align-items: center;
 }
 
-.login {
-    width: 400px;
-    height: min-content;
-    border-radius: 5px;
-    background-color: #f6f6f6;
+.row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 15px;
+}
+
+.login--input {
+    border: 1px solid #ccc;
+    border-radius: 6px;
     padding: 10px 30px;
 }
 
-.login h1 {
-    color: #0a0a0a
+.login--input:focus {
+    border-color: #33212A;
+}
+
+.errorMessage {
+    color: #5A1212;
+    display: block;
+    background-color: rgba(255, 0, 0, 0.1);
+    font-weight: bold;
+    text-transform: uppercase;
+    margin-bottom: 15px;
+    padding: 10px 15px;
+    border-radius: 6px;
 }

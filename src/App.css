@@ -13,6 +13,10 @@ body {
     overflow-x: hidden;
 }
 
+label {
+    display: block;
+}
+
 .standardInput {
     font-family: 'Fira Sans', sans-serif;
     font-size: 18px;
