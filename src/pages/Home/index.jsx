@@ -4,7 +4,8 @@ import './style.css';
 import imageBanner from '../../assets/undraw_horror_movie_3988.svg';
 // import loadingGIF from '../../assets/loading.gif';
 
-import SerieCard from '../../components/SerieCard';
+import SerieCard from '../../components/Carousel';
+import SerieList from '../../components/SerieList';
 
 const Home = () => {
     return (
@@ -19,7 +20,9 @@ const Home = () => {
             </div>
             <div className="cards">
                 <SerieCard />
-                <SerieCard />
+            </div>
+            <div>
+                <SerieList />
             </div>
             {/* <div className="loading">
                 <img src={loadingGIF} alt="Carregando" />

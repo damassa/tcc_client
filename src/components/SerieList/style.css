@@ -1,0 +1,13 @@
+.serie--list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    row-gap: 4px;
+}
+
+.serie--list--cards {
+    padding-left: 2.5px;
+    padding-right: 2.5px;
+    flex-basis: 50%;
+    width: 100%;
+}
