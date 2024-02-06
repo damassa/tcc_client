@@ -1,20 +1,17 @@
 .detail--container {
-    padding-top: 50px;
-    background-color: red;
+    padding-top: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .detail--banner {
     width: 100%;
-    height: 550px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: blue;
+    position: relative;
 }
 
 .detail--image--container {
-    height: 100%;
-    width: 100%;
+    display: flex;
     justify-content: center;
     align-items: center;
 }
@@ -24,7 +21,30 @@
     object-position: center;
 }
 
-.detail--info {
+.detail--info--name {
     display: flex;
+    width: 100%;
+    background-color: rgba(0, 0, 0, 0.4);
+    height: 215px;
+    margin-top: -200px;
+    position: relative;
+    padding: 0 30px;
+    flex-direction: column;
+}
 
+.detail--info--name h1 {
+    font-size: 48px;
+}
+
+.detail--info--name h2 {
+    font-size: 36px;
+}
+
+.detail--plot {
+    padding: 0 30px;
+}
+
+.detail--info {
+    background: red;
+    padding: 0 30px;
 }
