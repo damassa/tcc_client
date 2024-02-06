@@ -24,7 +24,15 @@ const SerieDetail = () => {
                     </p>
                 </div>
                 <div className="detail--info">
-                    lalala
+                    <div className="detail--info--image">
+                        <img src="https://media.fstatic.com/y9en3f1_mvlP9mSZ_gAAhl0TSHE=/210x312/smart/filters:format(webp)/media/movies/covers/2010/01/ae29d514be77f161a1cedbcc4bbd3ec0.jpg" alt="Serie" />
+                    </div>
+                    <div className="detail--data">
+                        <strong>Nome Completo: Dengeki Sentai Changeman</strong>
+                        <strong>Categoria: Super Sentai</strong>
+                        <strong>Ano: 1985</strong>
+                        <strong>Duração: 20 minutos</strong>
+                    </div>
                 </div>
             </div>
         </section>

@@ -45,6 +45,18 @@
 }
 
 .detail--info {
-    background: red;
     padding: 0 30px;
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+}
+
+.detail--data {
+    display: flex;
+    flex-direction: column;
+    background-color: blue;
+}
+
+.detail--info--image {
+    background: red;
 }
