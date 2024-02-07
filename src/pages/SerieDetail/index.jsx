@@ -2,6 +2,7 @@ import React from 'react';
 import './style.css';
 import PosterImage from '../../assets/Changeman.png';
 import AddFavoriteButton from '../../components/AddFavoriteButton';
+import { FaShareAlt } from 'react-icons/fa';
 
 const SerieDetail = () => {
     return (
@@ -10,17 +11,21 @@ const SerieDetail = () => {
                 <div className="detail--image--container">
                     <img src={PosterImage} alt="" />
                 </div>
-                <div className="detail--info--name">
-                    <h1>Dengeki Sentai Changeman</h1>
-                    <h2>1985</h2>
-                    <div className="detail--favorite">
+                <div className="detail--shadow--container">
+                    <div className="detail--name--year">
+                        <h1>Dengeki Sentai Changeman</h1>
+                        <h2>1985</h2>
+                    </div>
+                    <div className="detail--fav--share">
                         <AddFavoriteButton />
+                        <FaShareAlt size={20} />
                     </div>
                 </div>
                 <div className="detail--plot">
                     <p>
-                        Mussum Ipsum, cacilds vidis litro abertis. Sapien in monti palavris qui num significa nadis i pareci latim. Negão é teu passadis, eu sou faxa pretis. Mais vale um bebadis conhecidiss, que um alcoolatra anonimis. Detraxit consequat et quo num tendi nada.
-                        Si num tem leite então bota uma pinga aí cumpadi! Sapien in monti palavris qui num significa nadis i pareci latim. Interessantiss quisso pudia ce receita de bolis, mais bolis eu num gostis. Pra lá, depois divoltis porris, paradis.
+                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed sed dignissim mi, ac tincidunt risus. Donec nec arcu erat. Vestibulum nec felis rhoncus eros laoreet pretium in a massa. Sed pharetra ligula vitae nisi dictum, vel sodales sapien semper. 
+                        Fusce imperdiet, sapien ac posuere consectetur, ante mauris ornare risus, in porttitor mi lacus a nisi. Mauris rhoncus iaculis placerat. 
+                        Nullam turpis arcu, malesuada vitae est at, vestibulum faucibus arcu. Ut nec odio ultricies, viverra ligula ut, hendrerit mauris. Ut semper, mi ut efficitur auctor, sem eros tempor lacus, vel facilisis elit velit vulputate arcu.
                     </p>
                 </div>
                 <div className="detail--info">

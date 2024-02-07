@@ -21,7 +21,7 @@
     object-position: center;
 }
 
-.detail--info--name {
+.detail--shadow--container {
     display: flex;
     width: 100%;
     background-color: rgba(0, 0, 0, 0.4);
@@ -32,16 +32,29 @@
     flex-direction: column;
 }
 
-.detail--info--name h1 {
+.detail--name--year {
+    height: 130px;
+    line-height: 25px;
+}
+
+.detail--fav--share {
+    width: 25%;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    padding: 25px 0;
+}
+
+.detail--shadow--container h1 {
     font-size: 48px;
 }
 
-.detail--info--name h2 {
+.detail--shadow--container h2 {
     font-size: 36px;
 }
 
 .detail--plot {
-    padding: 0 30px;
+    padding: 30px;
 }
 
 .detail--info {
