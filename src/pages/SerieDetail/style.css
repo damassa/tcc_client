@@ -61,15 +61,24 @@
     padding: 0 30px;
     display: flex;
     align-items: center;
-    justify-content: space-evenly;
 }
 
 .detail--data {
     display: flex;
     flex-direction: column;
-    background-color: blue;
+    padding: 0 20px;
+    justify-content: space-between;
+}
+
+.detail--data strong {
+    margin: 25px;
+    font-size: 24px;
 }
 
 .detail--info--image {
     background: red;
+}
+
+.detail--episode--list {
+    background: blue;
 }

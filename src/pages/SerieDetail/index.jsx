@@ -39,6 +39,9 @@ const SerieDetail = () => {
                         <strong>Duração: 20 minutos</strong>
                     </div>
                 </div>
+                <div className="detail--episode--list">
+                    LISTA DE EPISÓDIOS
+                </div>
             </div>
         </section>
     )
