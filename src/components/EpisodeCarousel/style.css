@@ -1,0 +1,47 @@
+.episodeCarousel {
+    margin: 30px 0;
+    height: 225px;
+}
+
+.episodeCarousel--listarea {
+    overflow-x: hidden;
+    padding-left: 30px;
+}
+
+.episodeCarousel--list {
+    width: 999999999px; /* Tirar só quando tiver o backend pronto */
+    transition: all ease 0.5s;
+}
+
+.episodeCarousel--item img:hover {
+    transform: scale(1);
+}
+
+.episodeCarousel--arrowLeft,
+.episodeCarousel--arrowRight {
+    position: absolute;
+    width: 50px;
+    height: 225px;
+    background-color: rgba(0, 0, 0, 0.6);
+    z-index: 99;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    cursor: pointer;
+    opacity: 0;
+    transition: all ease 0.5s;
+}
+
+.episodeCarousel--arrowLeft {
+    left: 0;
+}
+
+.episodeCarousel--arrowRight {
+    right: 0;
+}
+
+.episodeCarousel:hover .episodeCarousel--arrowLeft,
+.episodeCarousel:hover, .episodeCarousel--arrowRight {
+    opacity: 1;
+}

@@ -3,11 +3,11 @@ import './style.css';
 // import SerieCard from "../SerieCard";
 
 const SerieList = ({}) => {
-    const [items, setItems] = useState([1,2,3,4,5]);
-    const [visible, setVisible] = useState(3);
+    const [items, setItems] = useState([1,2,3,4,5,6,7,8,9,10]);
+    const [visible, setVisible] = useState(4);
 
     const handleLoadMore = () => {
-        setVisible(visible + 3);
+        setVisible(visible + 4);
     }
 
     return (            

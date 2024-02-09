@@ -3,6 +3,8 @@ import './style.css';
 import PosterImage from '../../assets/Changeman.png';
 import AddFavoriteButton from '../../components/AddFavoriteButton';
 import { FaShareAlt } from 'react-icons/fa';
+import Carousel from '../../components/Carousel';
+import EpisodeCarousel from '../../components/EpisodeCarousel';
 
 const SerieDetail = () => {
     return (
@@ -39,9 +41,7 @@ const SerieDetail = () => {
                         <strong>Duração: 20 minutos</strong>
                     </div>
                 </div>
-                <div className="detail--episode--list">
-                    LISTA DE EPISÓDIOS
-                </div>
+                <EpisodeCarousel />
             </div>
         </section>
     )
