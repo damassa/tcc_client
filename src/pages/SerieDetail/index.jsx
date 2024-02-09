@@ -3,7 +3,6 @@ import './style.css';
 import PosterImage from '../../assets/Changeman.png';
 import AddFavoriteButton from '../../components/AddFavoriteButton';
 import { FaShareAlt } from 'react-icons/fa';
-import Carousel from '../../components/Carousel';
 import EpisodeCarousel from '../../components/EpisodeCarousel';
 
 const SerieDetail = () => {
