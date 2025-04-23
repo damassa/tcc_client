@@ -1,0 +1,93 @@
+.detail-container {
+  padding-top: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.detail-banner {
+  width: 100%;
+  position: relative;
+}
+
+.detail-image-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.detail-image-container img {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+  object-position: center;
+  background-blend-mode: multiply;
+}
+
+.detail-shadow-container {
+  display: flex;
+  width: 100%;
+  background-color: rgba(0, 0, 0, 0.4);
+  height: 215px;
+  margin-top: -200px;
+  position: relative;
+  padding: 0 30px;
+  flex-direction: column;
+}
+
+.detail-name-year {
+  padding-top: 20px;
+  height: 130px;
+  line-height: 25px;
+}
+
+.detail-fav-share {
+  width: 25%;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  padding: 25px 0;
+}
+
+.detail-shadow-container h1 {
+  font-size: 48px;
+}
+
+.detail-shadow-container h2 {
+  font-size: 36px;
+}
+
+.detail-plot {
+  padding: 30px;
+}
+
+.detail-info {
+  padding: 0 30px;
+  display: flex;
+  align-items: center;
+}
+
+.detail-data {
+  display: flex;
+  flex-direction: column;
+  padding: 0 20px;
+  justify-content: space-between;
+}
+
+.detail-data strong {
+  margin: 25px;
+  font-size: 24px;
+}
+
+.detail-info-image {
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
+.detail-image-card {
+  width: 100%;
+  max-width: 11.875rem;
+  height: auto;
+  object-fit: cover;
+  object-position: center;
+}
