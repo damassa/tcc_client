@@ -1,64 +1,97 @@
-import React from 'react';
-import { Link } from 'react-router-dom'; // ou use <a> se não estiver usando react-router
+import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
+import { FiMail, FiCheckCircle } from 'react-icons/fi';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const ForgotPassword: React.FC = () => {
+  const [emailSent, setEmailSent] = useState(false);
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    // Aqui você pode fazer a requisição ao backend
+    setEmailSent(true);
+  };
+
   return (
-    <div className="min-h-screen flex items-center justify-center px-4 py-8">
-      <div className="w-full max-w-2xl bg-white p-6 md:p-10 rounded-xl shadow-md">
-        <div className="mb-8">
-          <h2 className="text-center text-sm text-black px-4">
-            Digite o e-mail vinculado à sua conta aqui para recuperar sua senha.
-          </h2>
-        </div>
-        <form action="#!">
-          <div className="space-y-6">
-            <div>
-              <label htmlFor="email" className="sr-only">
-                E-mail
-              </label>
-              <div className="flex items-center border border-black rounded-md overflow-hidden">
-                <span className="px-3 bg-white text-black">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="16"
-                    height="16"
-                    fill="currentColor"
-                    className="bi bi-envelope"
-                    viewBox="0 0 16 16"
-                  >
-                    <path d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V4Zm2-1a1 1 0 0 0-1 1v.217l7 4.2 7-4.2V4a1 1 0 0 0-1-1H2Zm13 2.383-4.708 2.825L15 11.105V5.383Zm-.034 6.876-5.64-3.471L8 9.583l-1.326-.795-5.64 3.47A1 1 0 0 0 2 13h12a1 1 0 0 0 .966-.741ZM1 11.105l4.708-2.897L1 5.383v5.722Z" />
-                  </svg>
-                </span>
-                <input
-                  type="email"
-                  id="email"
-                  name="email"
-                  required
-                  placeholder="E-mail"
-                  className="w-full p-2.5 text-sm focus:outline-none"
-                />
+    <div
+      className="min-h-screen flex items-center justify-center px-4 py-8"
+      style={{ backgroundColor: '#070707' }}
+    >
+      <motion.div
+        initial={{ opacity: 0, y: 40 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 1 }}
+        className="w-full max-w-md p-8 sm:p-10 rounded-2xl shadow-2xl border"
+        style={{
+          backgroundColor: '#0e0e0e',
+          borderColor: '#57467b',
+          backdropFilter: 'blur(10px)',
+        }}
+      >
+        {!emailSent ? (
+          <>
+            <h2 className="text-center text-base sm:text-lg text-white mb-8 px-4">
+              Digite o e-mail vinculado à sua conta para recuperar sua senha.
+            </h2>
+
+            <form onSubmit={handleSubmit}>
+              <div className="space-y-6">
+                <div className="relative">
+                  <label htmlFor="email" className="sr-only">
+                    E-mail
+                  </label>
+                  <FiMail className="absolute top-3.5 left-3 text-[#57467b]" />
+                  <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    required
+                    placeholder="E-mail"
+                    className="w-full h-11 pl-10 pr-4 py-2 text-sm border rounded-md bg-black text-white placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-[#57467b] border-[#57467b] transition"
+                  />
+                </div>
+
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.97 }}
+                  type="submit"
+                  className="w-full h-11 rounded-md text-white font-semibold uppercase shadow-lg transition"
+                  style={{ backgroundColor: '#57467b' }}
+                >
+                  Recuperar senha
+                </motion.button>
               </div>
-            </div>
-            <div>
-              <button
-                type="submit"
-                className="w-full py-2.5 rounded-md bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-medium transition duration-300 ease-in-out hover:from-purple-700 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:ring-offset-2 shadow-md"
-              >
-                Recuperar senha
-              </button>
-            </div>
-          </div>
-        </form>
-        <hr className="my-8 border-gray-300" />
+            </form>
+          </>
+        ) : (
+          <AnimatePresence>
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.6 }}
+              className="text-center text-white space-y-6"
+            >
+              <FiCheckCircle size={64} className="mx-auto text-[#57467b]" />
+              <h3 className="text-2xl font-semibold">E-mail enviado!</h3>
+              <p className="text-sm text-gray-400 px-4">
+                Verifique sua caixa de entrada e siga as instruções para redefinir sua senha.
+              </p>
+            </motion.div>
+          </AnimatePresence>
+        )}
+
+        <hr className="my-8 border-gray-600" />
+
         <div className="flex justify-center gap-6">
-          <Link to="/login" className="text-gray-600 hover:underline">
+          <Link to="/login" className="text-[#57467b] hover:underline">
             Login
           </Link>
-          <Link to="/register" className="text-gray-600 hover:underline">
+          <Link to="/register" className="text-[#57467b] hover:underline">
             Registrar
           </Link>
         </div>
-      </div>
+      </motion.div>
     </div>
   );
 };

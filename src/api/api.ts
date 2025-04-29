@@ -11,6 +11,14 @@ const api = axios.create({
 
 export default api;
 
+export const notAuthApi = axios.create({
+  baseURL: import.meta.env.VITE_API_URL,
+  headers: {
+    'Content-Type': 'application/json',
+    'Access-Control-Allow-Origin': 'http://localhost:3000',
+  },
+});
+
 // export const getAxiosConfig = (): AxiosRequestConfig => {
 //   const token = localStorage.getItem('jwt');
 //   return {

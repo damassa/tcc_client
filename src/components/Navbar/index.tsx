@@ -5,11 +5,13 @@ import { FaBars, FaSearch } from 'react-icons/fa';
 import { getSeriesByName } from '../../api/SerieApi';
 import { SerieContext } from '../../context/SerieProvider';
 import { FiSend } from 'react-icons/fi';
+import AccountModal from '../AccountModal';
 
 const Navbar: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [isAccountModalOpen, setIsAccountModalOpen] = useState(false);
   const [filteredSerie, setFilteredSerie] = useState('');
 
   const { setSeriesSearch } = React.useContext<any>(SerieContext);
@@ -30,6 +32,11 @@ const Navbar: React.FC = () => {
     handleSearch();
   }, [filteredSerie]);
 
+  const handleMyData = () => {
+    const data = JSON.parse(localStorage.getItem('user') || '{}');
+    return data;
+  };
+
   const handleLogout = () => {
     localStorage.removeItem('jwt');
     navigate('/login');
@@ -47,6 +54,19 @@ const Navbar: React.FC = () => {
       }
     } catch (error) {
       console.error('Failed to fetch series', error);
+    }
+  };
+
+  const handleInitials = () => {
+    const name = handleMyData().name.trim();
+    const parts = name.split(/\s+/);
+
+    if (parts.length === 1) {
+      return parts[0].substring(0, 2).toUpperCase();
+    } else {
+      const first = parts[0][0];
+      const last = parts[parts.length - 1][0];
+      return (first + last).toUpperCase();
     }
   };
 
@@ -94,14 +114,14 @@ const Navbar: React.FC = () => {
                 onChange={(e) => setFilteredSerie(e.target.value)}
                 type="search"
                 name="search"
-                placeholder="O que você procura?"
+                placeholder="O que você está buscando?"
                 className="bg-transparent border border-white text-white rounded-sm w-100 h-9 py-1 px-3 pl-10 text-sm placeholder:text-white focus:outline-none focus:ring-2 focus:ring-purple-800"
               />
 
               <button
                 onClick={handleSearch}
                 type="button"
-                className="absolute right-2 top-1/2 -translate-y-1/2 bg-blue-500 text-white p-2 sm:p-2.5 rounded-full hover:bg-blue-600 transition"
+                className="absolute right-2 top-1/2 -translate-y-1/2 bg-purple-500 text-white p-2 sm:p-2.5 rounded-full hover:bg-purple-800 transition"
               >
                 <FiSend className="w-2 h-2 sm:w-2 sm:h-2" />
               </button>
@@ -113,23 +133,29 @@ const Navbar: React.FC = () => {
             <div className="relative w-full hidden md:block">
               <button
                 onClick={toggleUserMenu}
-                className="flex items-center justify-center w-8 h-8 rounded-full bg-green-400 hover:bg-green-800 text-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-400"
+                className="flex items-center justify-center w-8 h-8 rounded-full bg-green-400 hover:bg-green-800 text-black focus:outline-none focus:ring-2 focus:ring-gray-400"
                 aria-label="Abrir menu do usuário"
               >
-                A
+                {handleInitials()}
               </button>
               {isOpen && (
-                <div className="absolute right-0 mt-2 py-2 w-48 rounded-md shadow-md bg-gray-950 animate-fade-in">
+                <div className="absolute right-0 mt-2 py-2 w-48 rounded-md shadow-md bg-purple-950 animate-fade-in">
                   <div className="px-4 pb-2 border-b border-gray-700">
-                    <strong className="text-white">Administrador</strong>
-                    <h5 className="text-sm text-white">fdfreekazoid@gmail.com</h5>
+                    <strong className="text-white text-sm">{handleMyData().name}</strong>
+                    <h5 className=" text-white text-xs">{handleMyData().email}</h5>
                   </div>
-                  <button className="block w-full text-left px-4 py-2 text-white hover:text-purple-400">
+                  <button
+                    onClick={() => {
+                      setIsAccountModalOpen(true);
+                      setIsOpen(false); // opcional: fecha o menu drop-down ao abrir modal
+                    }}
+                    className="block w-full text-left px-4 py-2 text-white hover:text-purple-400 cursor-pointer"
+                  >
                     Minha conta
                   </button>
                   <button
                     onClick={handleLogout}
-                    className="block w-full text-left px-4 py-2 text-white hover:text-red-400"
+                    className="block w-full text-left px-4 py-2 text-white hover:text-purple-400 cursor-pointer"
                   >
                     Sair
                   </button>
@@ -160,14 +186,14 @@ const Navbar: React.FC = () => {
             onChange={(e) => setFilteredSerie(e.target.value)}
             type="search"
             name="search"
-            placeholder="O que você procura?"
+            placeholder="O que você está buscando?"
             className="bg-transparent border border-white text-white rounded-sm w-100 h-9 py-1 px-3 pl-10 text-sm placeholder:text-white focus:outline-none focus:ring-2 focus:ring-purple-800"
           />
 
           <button
             onClick={handleSearch}
             type="button"
-            className="absolute right-2 top-1/2 -translate-y-1/2 bg-blue-500 text-white p-2 sm:p-2.5 rounded-full hover:bg-blue-600 transition"
+            className="absolute right-2 top-1/2 -translate-y-1/2 bg-purple-500 text-white p-2 sm:p-2.5 rounded-full hover:bg-blue-600 transition"
           >
             <FiSend className="w-2 h-2 sm:w-2 sm:h-2" />
           </button>
@@ -186,10 +212,16 @@ const Navbar: React.FC = () => {
 
         <div className="border-t border-gray-700 mt-3 pt-3">
           <div className="mb-2">
-            <strong className="text-white block">Administrador</strong>
-            <h5 className="text-sm text-white">fdfreekazoid@gmail.com</h5>
+            <strong className="text-white block">{handleMyData().name}</strong>
+            <h5 className="text-sm text-white">{handleMyData().email}</h5>
           </div>
-          <button className="block w-full text-left px-0 py-2 text-white hover:text-purple-400">
+          <button
+            onClick={() => {
+              setIsAccountModalOpen(true);
+              setIsOpen(false); // opcional: fecha o menu drop-down ao abrir modal
+            }}
+            className="block w-full text-left px-0 py-2 text-white hover:text-purple-400"
+          >
             Minha conta
           </button>
           <button
@@ -200,6 +232,7 @@ const Navbar: React.FC = () => {
           </button>
         </div>
       </div>
+      <AccountModal isOpen={isAccountModalOpen} onClose={() => setIsAccountModalOpen(false)} />
     </nav>
   );
 };

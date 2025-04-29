@@ -24,21 +24,3 @@ const router = createBrowserRouter(
   ),
 );
 export default router;
-// const RoutesSite: React.FC = () => {
-//   return (
-//     <BrowserRouter>
-//       <Routes>
-//         <Route path="/" element={<Home />} />
-//         <Route path="/detail" element={<SerieDetail />} />
-//         <Route path="/categories" element={<Categories />} />
-//         <Route path="/login" element={<Login />} />
-//         <Route path="/register" element={<Register />} />
-//         <Route path="/forgotPassword" element={<ForgotPassword />} />
-//         <Route path="/updatePassword" element={<UpdatePassword />} />
-//         <Route path="/favorites" element={<Favorites />} />
-//       </Routes>
-//     </BrowserRouter>
-//   );
-// };
-
-// export default RoutesSite;
