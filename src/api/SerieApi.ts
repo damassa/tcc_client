@@ -1,4 +1,3 @@
-import { useEffect } from 'react';
 import { SerieResponse } from '../types/serie';
 import api from './api';
 

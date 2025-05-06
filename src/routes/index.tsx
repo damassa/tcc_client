@@ -8,6 +8,7 @@ import Register from '../pages/Register';
 import ForgotPassword from '../pages/ForgotPassword';
 import UpdatePassword from '../pages/UpdatePassword';
 import PrivateRoute from '../components/PrivateRoute';
+import EditUser from '../pages/EditUser';
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -15,6 +16,7 @@ const router = createBrowserRouter(
       <Route path="/" element={<PrivateRoute element={<Home />} />} />
       <Route path="/detail/:id" element={<PrivateRoute element={<SerieDetail />} />} />
       <Route path="/categories" element={<PrivateRoute element={<Categories />} />} />
+      <Route path="/editUser" element={<PrivateRoute element={<EditUser />} />} />
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
       <Route path="/forgotPassword" element={<ForgotPassword />} />

@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Link } from 'react-router-dom';
 
 interface AccountModalProps {
   isOpen: boolean;
@@ -16,6 +17,24 @@ const AccountModal: React.FC<AccountModalProps> = ({ isOpen, onClose }) => {
   }, [onClose]);
 
   if (!isOpen) return null;
+
+  const handleInitials = () => {
+    const name = handleMyData().name.trim();
+    const parts = name.split(/\s+/);
+
+    if (parts.length === 1) {
+      return parts[0].substring(0, 2).toUpperCase();
+    } else {
+      const first = parts[0][0];
+      const last = parts[parts.length - 1][0];
+      return (first + last).toUpperCase();
+    }
+  };
+
+  const handleMyData = () => {
+    const data = JSON.parse(localStorage.getItem('user') || '{}');
+    return data;
+  };
 
   return (
     <AnimatePresence>
@@ -45,23 +64,21 @@ const AccountModal: React.FC<AccountModalProps> = ({ isOpen, onClose }) => {
           <div className="flex flex-col items-center mb-6">
             <div className="relative">
               <div className="absolute inset-0 rounded-full bg-gradient-to-r from-purple-500 via-pink-500 to-purple-500 animate-pulse-slow opacity-70 blur-md"></div>
-              <img
-                src="https://i.pravatar.cc/150?img=3"
-                alt="Avatar"
-                className="w-20 h-20 rounded-full border-4 border-purple-600 shadow-md relative z-10"
-              />
+              <button
+                className="flex items-center justify-center w-8 h-8 rounded-full bg-green-400 hover:bg-green-800 text-black focus:outline-none focus:ring-2 focus:ring-gray-400"
+                aria-label="Abrir menu do usuário"
+              >
+                {handleInitials()}
+              </button>
             </div>
-            <h2 className="text-2xl font-semibold mt-3">Administrador</h2>
-            <p className="text-sm text-gray-400">fdfreekazoid@gmail.com</p>
+            <h2 className="text-2xl font-semibold mt-3">{handleMyData().name}</h2>
+            <p className="text-sm text-gray-400">{handleMyData().email}</p>
           </div>
 
           {/* Opções de Conta */}
           <div className="space-y-4">
             <button className="w-full py-3 rounded-lg bg-gradient-to-r from-purple-700 to-purple-800 hover:opacity-90 transition">
-              Ver Perfil
-            </button>
-            <button className="w-full py-3 rounded-lg bg-gradient-to-r from-purple-700 to-purple-800 hover:opacity-90 transition">
-              Configurações
+              <Link to="/editUser">Editar Perfil</Link>
             </button>
             <button className="w-full py-3 rounded-lg bg-gradient-to-r from-red-600 to-red-700 hover:opacity-90 transition">
               Sair
