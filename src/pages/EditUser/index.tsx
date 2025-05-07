@@ -5,6 +5,7 @@ import Footer from '../../components/Footer';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { editUser } from '../../api/UserApi';
+import { useNavigate } from 'react-router-dom';
 
 const EditUser = () => {
   const handleMyData = () => {
@@ -22,6 +23,8 @@ const EditUser = () => {
     confirmPassword: '',
   });
 
+  const navigate = useNavigate();
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
@@ -37,7 +40,7 @@ const EditUser = () => {
     const { name, email } = formData;
     const { newPassword, confirmPassword } = passwords;
 
-    if (!name || !email) {
+    if (!name) {
       toast.error('Por favor, preencha todos os campos obrigatórios.');
       return;
     }
@@ -48,24 +51,30 @@ const EditUser = () => {
     }
 
     // Monta payload dinamicamente
-    const payload: { name: string; email: string; password?: string } = {
-      name,
-      email,
+    const payload: { name: string; email: string; newPassword: string | undefined } = {
+      name: formData.name,
+      email: formData.email,
+      newPassword: undefined,
     };
 
     if (newPassword) {
-      payload.password = newPassword;
+      payload.newPassword = passwords.newPassword;
     }
 
     try {
+      console.log(payload);
+      //TODO: rotear para login quando alterar senha
       const response = await editUser(payload);
 
-      if (response.status === 200) {
+      if (response?.status === 200) {
         toast.success('Dados atualizados com sucesso!');
-        const updatedUser = { ...handleMyData(), name, email };
+        const updatedUser = { ...handleMyData(), name };
         localStorage.setItem('user', JSON.stringify(updatedUser));
         setFormData({ name, email });
         setPasswords({ newPassword: '', confirmPassword: '' });
+        setTimeout(() => {
+          navigate(-1);
+        }, 2000);
       } else {
         toast.error('Erro ao atualizar os dados.');
       }
@@ -132,6 +141,7 @@ const EditUser = () => {
             <div>
               <label className="block text-sm font-medium text-zinc-300 mb-1">Email</label>
               <input
+                disabled
                 type="email"
                 name="email"
                 value={formData.email}
@@ -143,7 +153,7 @@ const EditUser = () => {
             <div>
               <label className="block text-sm font-medium text-zinc-300 mb-1">Nova senha</label>
               <input
-                placeholder="******"
+                placeholder="Digite uma nova senha"
                 className="w-full bg-zinc-800 border border-zinc-600 rounded-lg px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-pink-500"
                 type="password"
                 name="newPassword"
@@ -157,7 +167,7 @@ const EditUser = () => {
                 Confirme sua senha
               </label>
               <input
-                placeholder="******"
+                placeholder="Confirme sua nova senha"
                 className="w-full bg-zinc-800 border border-zinc-600 rounded-lg px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-pink-500"
                 type="password"
                 name="confirmPassword"
@@ -180,7 +190,7 @@ const EditUser = () => {
       <ToastContainer
         position="top-right"
         autoClose={4000}
-        hideProgressBar={true}
+        hideProgressBar={false}
         newestOnTop={false}
         closeOnClick
         rtl={false}

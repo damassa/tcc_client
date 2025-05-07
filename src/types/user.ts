@@ -18,10 +18,10 @@ export class UserUpdate {
   constructor(
     public name: string,
     public email: string,
-    public password: string,
+    public newPassword: string | undefined,
   ) {
     this.name = name;
     this.email = email;
-    this.password = password;
+    this.newPassword = newPassword;
   }
 }
