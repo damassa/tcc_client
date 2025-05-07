@@ -2,6 +2,9 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { editUser } from '../../api/UserApi';
 
 const EditUser = () => {
   const handleMyData = () => {
@@ -14,6 +17,11 @@ const EditUser = () => {
     email: handleMyData().email,
   });
 
+  const [passwords, setPasswords] = useState({
+    newPassword: '',
+    confirmPassword: '',
+  });
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
@@ -23,35 +31,48 @@ const EditUser = () => {
    *
    * @param {React.FormEvent<HTMLFormElement>} e - The form submission event.
    */
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>): void => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
 
-    const {
+    const { name, email } = formData;
+    const { newPassword, confirmPassword } = passwords;
+
+    if (!name || !email) {
+      toast.error('Por favor, preencha todos os campos obrigatórios.');
+      return;
+    }
+
+    if ((newPassword || confirmPassword) && newPassword !== confirmPassword) {
+      toast.error('As senhas não conferem. Por favor, tente novamente.');
+      return;
+    }
+
+    // Monta payload dinamicamente
+    const payload: { name: string; email: string; password?: string } = {
       name,
       email,
-      newPassword,
-      confirmPassword,
-    }: {
-      name: string;
-      email: string;
-      newPassword?: string;
-      confirmPassword?: string;
-    } = formData;
+    };
 
-    // Validate form data
-    if (!name || !email) {
-      alert('Por favor, preencha todos os campos obrigatórios.');
-      return;
+    if (newPassword) {
+      payload.password = newPassword;
     }
 
-    if (newPassword && confirmPassword && newPassword !== confirmPassword) {
-      alert('As senhas não conferem. Por favor, tente novamente.');
-      return;
-    }
+    try {
+      const response = await editUser(payload);
 
-    // If validation passes, submit the form data
-    console.log(formData);
-    // You can also make an API call to update the user data here
+      if (response.status === 200) {
+        toast.success('Dados atualizados com sucesso!');
+        const updatedUser = { ...handleMyData(), name, email };
+        localStorage.setItem('user', JSON.stringify(updatedUser));
+        setFormData({ name, email });
+        setPasswords({ newPassword: '', confirmPassword: '' });
+      } else {
+        toast.error('Erro ao atualizar os dados.');
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error('Erro ao atualizar os dados.');
+    }
   };
 
   return (
@@ -122,11 +143,12 @@ const EditUser = () => {
             <div>
               <label className="block text-sm font-medium text-zinc-300 mb-1">Nova senha</label>
               <input
+                placeholder="******"
+                className="w-full bg-zinc-800 border border-zinc-600 rounded-lg px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-pink-500"
                 type="password"
                 name="newPassword"
-                onChange={handleChange}
-                className="w-full bg-zinc-800 border border-zinc-600 rounded-lg px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-pink-500"
-                placeholder="******"
+                value={passwords.newPassword}
+                onChange={(e) => setPasswords({ ...passwords, newPassword: e.target.value })}
               />
             </div>
 
@@ -135,11 +157,12 @@ const EditUser = () => {
                 Confirme sua senha
               </label>
               <input
+                placeholder="******"
+                className="w-full bg-zinc-800 border border-zinc-600 rounded-lg px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-pink-500"
                 type="password"
                 name="confirmPassword"
-                onChange={handleChange}
-                className="w-full bg-zinc-800 border border-zinc-600 rounded-lg px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-pink-500"
-                placeholder="******"
+                value={passwords.confirmPassword}
+                onChange={(e) => setPasswords({ ...passwords, confirmPassword: e.target.value })}
               />
             </div>
 
@@ -154,6 +177,18 @@ const EditUser = () => {
           </motion.form>
         </motion.div>
       </div>
+      <ToastContainer
+        position="top-right"
+        autoClose={4000}
+        hideProgressBar={true}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="dark"
+      />
       <Footer />
     </>
   );
