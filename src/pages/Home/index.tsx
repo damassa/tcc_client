@@ -1,5 +1,5 @@
 import './style.css';
-import imageBanner from '../../assets/images/undraw_horror_movie_3988.svg';
+import imageBanner from '../../assets/images/imageBanner.png';
 import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
 import Carousel from '../../components/Carousel';
@@ -44,17 +44,24 @@ const Home: React.FC = () => {
     <>
       <Navbar />
       <div className="w-full px-4 sm:px-6 lg:px-10 py-10 text-white min-h-screen">
-        <div className="flex flex-col md:flex-row justify-between items-center gap-6 md:gap-10">
-          <div className="flex-1 text-center md:text-left">
-            <p className="text-2xl md:text-4xl font-bold">
-              Assista todas as suas séries favoritas de Tokusatsu no conforto de sua casa.
+        <div className="flex flex-col-reverse md:flex-row items-center justify-between gap-8 md:gap-16 px-4 md:px-12 py-12 bg-black">
+          {/* Texto */}
+          <div className="flex-1 text-center md:text-left space-y-4">
+            <h1 className="text-3xl md:text-5xl font-extrabold leading-tight text-white">
+              Assista todas as suas séries favoritas de{' '}
+              <span className="text-purple-500">Tokusatsu</span> no conforto de sua casa.
+            </h1>
+            <p className="text-lg md:text-xl text-gray-300">
+              Ação, nostalgia e heróis lendários direto da sua tela.
             </p>
           </div>
-          <div className="flex-1">
+
+          {/* Imagem */}
+          <div className="flex-1 w-full max-w-md md:max-w-xl">
             <img
               src={imageBanner}
               alt="imagem da homepage"
-              className="w-full h-80 object-contain"
+              className="w-full h-auto object-contain rounded-xl ring-1 ring-purple-700/40 shadow-purple-500/20 shadow-2xl"
             />
           </div>
         </div>

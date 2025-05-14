@@ -3,13 +3,13 @@ export class UserResponse {
     public uid: number,
     public name: string,
     public email: string,
-    public password: string,
+    public senha: string,
     public role: string,
   ) {
     this.uid = uid;
     this.name = name;
     this.email = email;
-    this.password = password;
+    this.senha = senha;
     this.role = role;
   }
 }

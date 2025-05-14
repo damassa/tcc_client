@@ -9,6 +9,7 @@ import ForgotPassword from '../pages/ForgotPassword';
 import UpdatePassword from '../pages/UpdatePassword';
 import PrivateRoute from '../components/PrivateRoute';
 import EditUser from '../pages/EditUser';
+import ConfirmEmail from '../pages/ConfirmEmail';
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -19,6 +20,7 @@ const router = createBrowserRouter(
       <Route path="/editUser" element={<PrivateRoute element={<EditUser />} />} />
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
+      <Route path="/confirm-email" element={<ConfirmEmail />} />
       <Route path="/forgotPassword" element={<ForgotPassword />} />
       <Route path="/updatePassword" element={<UpdatePassword />} />
       <Route path="/favorites" element={<PrivateRoute element={<Favorites />} />} />

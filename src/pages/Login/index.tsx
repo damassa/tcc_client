@@ -1,12 +1,13 @@
 import React, { FormEvent, useState } from 'react';
 import LoginImage from '../../assets/images/jiraya.jpg';
 import { Link, useNavigate } from 'react-router-dom';
-import api, { notAuthApi } from '../../api/api';
+import { notAuthApi } from '../../api/api';
 import { motion } from 'framer-motion';
 import { FiMail, FiLock } from 'react-icons/fi';
 
 import './style.css';
 import axios from 'axios';
+import { toast, ToastContainer } from 'react-toastify';
 
 /**
  * Login component for user authentication
@@ -53,8 +54,17 @@ const Login: React.FC = () => {
       const user = await localApi.get('/api/v1/users/me');
 
       localStorage.setItem('user', JSON.stringify(user.data));
+      if (response.status === 200) {
+        const userName = user.data.name;
 
-      navigate('/');
+        setTimeout(() => {
+          toast.success('Bem vindo', userName);
+          navigate('/');
+        }, 2000);
+      } else {
+        const text = await response.data.text();
+        setError(text || 'Falha no login.');
+      }
     } catch (error) {
       // Handle login error
 
@@ -132,7 +142,7 @@ const Login: React.FC = () => {
                   name="password"
                   type="password"
                   className="w-full h-11 pl-10 pr-4 py-2 text-sm border border-purple-400 rounded-md bg-black text-white placeholder:text-gray-500 focus:outline-none focus:ring-2 transition"
-                  placeholder="********"
+                  placeholder="Digite sua senha"
                   onChange={handleChange}
                 />
               </div>
@@ -163,62 +173,19 @@ const Login: React.FC = () => {
           </form>
         </div>
       </motion.div>
+      <ToastContainer
+        position="top-right"
+        autoClose={4000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="dark"
+      />
     </div>
-    // <div className="min-h-screen flex flex-col md:flex-row bg-black-100">
-    //   <div
-    //     className="hidden md:flex w-1/2 bg-cover bg-center"
-    //     style={{ backgroundImage: `url(${LoginImage})` }}
-    //   >
-    //     <div className="w-full h-full bg-black opacity-50 flex items-center justify-center">
-    //       <h2 className="text-white text-3xl font-bold login-text-border">
-    //         Bem vindo ao World of Tokusatsu!
-    //       </h2>
-    //     </div>
-    //   </div>
-    //   <div className="w-full md:w-1/2 flex items-center justify-center p-8 bg-gray-100">
-    //     <div className="w-full max-w-md bg-white p-8 rounded shadow border">
-    //       <h2 className="text-2xl font-bold text-center mb-6">Área de login</h2>
-    //       <form action="" onSubmit={handleSubmit} method="post" className="space-y-6">
-    //         <div className="space-y-4">
-    //           <div>
-    //             <label className="block text-gray-700 text-md font-medium mb-1">E-mail:</label>
-    //             <input
-    //               required
-    //               name="email"
-    //               type="email"
-    //               className="w-full h-10 text-sm px-4 py-2 placeholder:pl-4 border rounded-sm focus:outline-none focus:ring-1 focus:pl-4 transform transition duration-300 ease-in-out hover:scale-105"
-    //               placeholder="seuemail@exemplo.com"
-    //               onChange={handleChange}
-    //             />
-    //           </div>
-    //           <div>
-    //             <label className="block text-gray-700 text-md font-medium mb-1">Senha:</label>
-    //             <input
-    //               required
-    //               name="password"
-    //               type="password"
-    //               className="w-full h-10 text-sm px-4 py-2 placeholder:pl-4 focus:pl-4 border rounded-sm focus:outline-none focus:ring-1 transform transition duration-300 ease-in-out hover:scale-105"
-    //               placeholder="********"
-    //               onChange={handleChange}
-    //             />
-    //           </div>
-    //         </div>
-    //         <button
-    //           type="submit"
-    //           className="login--button h-10 w-full bg-green-500 hover:bg-green-600 text-white px-4 rounded-sm focus:outline-none focus:ring-2 focus:ring-green-400 uppercase transform transition duration-300 ease-in-out hover:scale-105 mt-6"
-    //         >
-    //           Login
-    //         </button>
-    //         <p className="forgot-password text-right text-black space-y-1">
-    //           Esqueceu sua senha? Clique <Link to="/forgotPassword">aqui</Link>
-    //         </p>
-    //         <p className="register text-black text-center space-y-1">
-    //           Não possui conta? Registre-se <Link to="/register">aqui</Link>
-    //         </p>
-    //       </form>
-    //     </div>
-    //   </div>
-    // </div>
   );
 };
 

@@ -62,8 +62,6 @@ const EditUser = () => {
     }
 
     try {
-      console.log(payload);
-      //TODO: rotear para login quando alterar senha
       const response = await editUser(payload);
 
       if (response?.status === 200) {
@@ -73,7 +71,12 @@ const EditUser = () => {
         setFormData({ name, email });
         setPasswords({ newPassword: '', confirmPassword: '' });
         setTimeout(() => {
-          navigate(-1);
+          if (payload.newPassword) {
+            localStorage.removeItem('jwt');
+            navigate('/login');
+          } else {
+            navigate(-1);
+          }
         }, 2000);
       } else {
         toast.error('Erro ao atualizar os dados.');
