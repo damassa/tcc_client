@@ -138,7 +138,7 @@ const Register: React.FC = () => {
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.97 }}
               type="submit"
-              className="w-full h-11 rounded-md text-white font-semibold uppercase shadow-lg transition"
+              className="w-full h-11 rounded-md text-white font-semibold uppercase shadow-lg transition cursor-pointer"
               style={{ backgroundColor: '#57467b' }}
             >
               Criar Conta
