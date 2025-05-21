@@ -75,7 +75,12 @@ export const removeSerieFromFavorites = async (serie_id: number, user_id: number
 // Busca todas as séries favoritas do usuário logado
 export const getFavoriteSeries = async (): Promise<SerieResponse[]> => {
   try {
-    const response = await api.get('/api/v1/users/me/favorites', {});
+    const handleMyData = () => {
+      const data = JSON.parse(localStorage.getItem('user') || '{}');
+      return data;
+    };
+    const response = await api.get(`/api/v1/users/${handleMyData().id}/favorites`, {});
+
     if (response.status === 204) {
       return [];
     }
