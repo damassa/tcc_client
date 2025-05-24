@@ -3,14 +3,28 @@ import { Link } from 'react-router-dom';
 import { FiMail, FiCheckCircle } from 'react-icons/fi';
 import { motion, AnimatePresence } from 'framer-motion';
 import Footer from '../../components/Footer';
+import api from '../../api/api';
+import axios from 'axios';
 
 const ForgotPassword: React.FC = () => {
+  const [email, setEmail] = useState('');
   const [emailSent, setEmailSent] = useState(false);
+  const [message, setMessage] = useState('');
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Aqui você pode fazer a requisição ao backend
-    setEmailSent(true);
+
+    try {
+      await axios.post('http://localhost:8080/api/v1/users/forgot-password', null, {
+        params: { email },
+      });
+      setEmailSent(true);
+      setMessage(
+        'Se o e-mail existir em nossa base, você receberá instruções para redefinição de senha.',
+      );
+    } catch (error) {
+      setMessage('Ocorreu um erro. Tente mais tarde');
+    }
   };
 
   return (
@@ -45,7 +59,8 @@ const ForgotPassword: React.FC = () => {
                     <FiMail className="absolute top-3.5 left-3 text-[#57467b]" />
                     <input
                       type="email"
-                      id="email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
                       name="email"
                       required
                       placeholder="E-mail"
@@ -57,13 +72,14 @@ const ForgotPassword: React.FC = () => {
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.97 }}
                     type="submit"
-                    className="w-full h-11 rounded-md text-white font-semibold uppercase shadow-lg transition"
+                    className="w-full h-11 rounded-md text-white font-semibold uppercase shadow-lg transition cursor-pointer"
                     style={{ backgroundColor: '#57467b' }}
                   >
                     Recuperar senha
                   </motion.button>
                 </div>
               </form>
+              {message && <p className="text-sm text-gray-400 mt-4">{message}</p>}
             </>
           ) : (
             <AnimatePresence>

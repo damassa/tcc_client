@@ -160,7 +160,7 @@ const Login: React.FC = () => {
 
             <p className="text-sm text-gray-400 text-center">
               Esqueceu sua senha?{' '}
-              <Link to="/forgotPassword" className="text-[#57467b] hover:underline">
+              <Link to="/forgot-password" className="text-[#57467b] hover:underline">
                 Clique aqui
               </Link>
             </p>

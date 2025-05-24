@@ -17,12 +17,12 @@ const router = createBrowserRouter(
       <Route path="/" element={<PrivateRoute element={<Home />} />} />
       <Route path="/detail/:id" element={<PrivateRoute element={<SerieDetail />} />} />
       <Route path="/categories" element={<PrivateRoute element={<Categories />} />} />
-      <Route path="/editUser" element={<PrivateRoute element={<EditUser />} />} />
+      <Route path="/edit-user" element={<PrivateRoute element={<EditUser />} />} />
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
       <Route path="/confirm-email" element={<ConfirmEmail />} />
-      <Route path="/forgotPassword" element={<ForgotPassword />} />
-      <Route path="/updatePassword" element={<UpdatePassword />} />
+      <Route path="/forgot-password" element={<ForgotPassword />} />
+      <Route path="/reset-password" element={<UpdatePassword />} />
       <Route path="/favorites" element={<PrivateRoute element={<Favorites />} />} />
     </>,
   ),

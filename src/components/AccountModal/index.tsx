@@ -78,7 +78,7 @@ const AccountModal: React.FC<AccountModalProps> = ({ isOpen, onClose }) => {
           {/* Opções de Conta */}
           <div className="space-y-4">
             <button className="w-full py-3 rounded-lg bg-gradient-to-r from-purple-700 to-purple-800 hover:opacity-90 transition">
-              <Link to="/editUser">Editar Perfil</Link>
+              <Link to="/edit-user">Editar Perfil</Link>
             </button>
             <button className="w-full py-3 rounded-lg bg-gradient-to-r from-red-600 to-red-700 hover:opacity-90 transition">
               Sair
