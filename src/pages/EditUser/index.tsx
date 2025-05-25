@@ -1,32 +1,89 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { editUser } from '../../api/UserApi';
+import api from '../../api/api';
 import { useNavigate } from 'react-router-dom';
+// import { useNavigate } from 'react-router-dom';
+interface UserUpdate {
+  id: number;
+  name?: string;
+  email?: string;
+}
+const EditUser: React.FC = () => {
+  // const handleMyData = () => {
+  //   const data = JSON.parse(localStorage.getItem('user') || '{}');
+  //   return data;
+  // };
 
-const EditUser = () => {
-  const handleMyData = () => {
-    const data = JSON.parse(localStorage.getItem('user') || '{}');
-    return data;
+  const [userData, setUserData] = useState<UserUpdate | null>(null);
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+  });
+
+  const [isLoading, setIsLoading] = useState(false);
+
+  const fetchUser = async () => {
+    try {
+      const response = await api.get('/api/v1/users/me');
+      const data = response.data;
+      setUserData(data);
+      setFormData({ name: data.name, email: data.email });
+    } catch (error: unknown) {
+      if (error.response?.status === 401) {
+        toast.error('Sua sessão expirou, faça login novamente');
+        navigate('/login');
+      } else {
+        toast.error('Erro ao buscar informações do usuário');
+      }
+      console.error('Erro:', error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  const [formData, setFormData] = useState({
-    name: handleMyData().name,
-    email: handleMyData().email,
-  });
+  useEffect(() => {
+    fetchUser();
+  }, []);
 
-  const [passwords, setPasswords] = useState({
-    newPassword: '',
-    confirmPassword: '',
-  });
+  // const [passwords, setPasswords] = useState({
+  //   newPassword: '',
+  //   confirmPassword: '',
+  // });
 
   const navigate = useNavigate();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!userData) return;
+
+    setIsLoading(true);
+
+    try {
+      await api.patch('/api/v1/users/edit-user', {
+        id: userData.id,
+        name: formData.name,
+        email: formData.email,
+      });
+      toast.success('Informações atualizadas com sucesso');
+      await fetchUser();
+    } catch (error: unknown) {
+      const errorMessage = error.response?.data || 'Erro ao atualizar informações';
+      toast.error(errorMessage);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   /**
@@ -34,58 +91,58 @@ const EditUser = () => {
    *
    * @param {React.FormEvent<HTMLFormElement>} e - The form submission event.
    */
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>): Promise<void> => {
-    e.preventDefault();
+  // const handleSubmit = async (e: React.FormEvent<HTMLFormElement>): Promise<void> => {
+  //   e.preventDefault();
 
-    const { name, email } = formData;
-    const { newPassword, confirmPassword } = passwords;
+  //   const { name, email } = formData;
+  //   const { newPassword, confirmPassword } = passwords;
 
-    if (!name) {
-      toast.error('Por favor, preencha todos os campos obrigatórios.');
-      return;
-    }
+  //   if (!name) {
+  //     toast.error('Por favor, preencha todos os campos obrigatórios.');
+  //     return;
+  //   }
 
-    if ((newPassword || confirmPassword) && newPassword !== confirmPassword) {
-      toast.error('As senhas não conferem. Por favor, tente novamente.');
-      return;
-    }
+  //   if ((newPassword || confirmPassword) && newPassword !== confirmPassword) {
+  //     toast.error('As senhas não conferem. Por favor, tente novamente.');
+  //     return;
+  //   }
 
-    // Monta payload dinamicamente
-    const payload: { name: string; email: string; newPassword: string | undefined } = {
-      name: formData.name,
-      email: formData.email,
-      newPassword: undefined,
-    };
+  //   // Monta payload dinamicamente
+  //   const payload: { name: string; email: string; newPassword: string | undefined } = {
+  //     name: formData.name,
+  //     email: formData.email,
+  //     newPassword: undefined,
+  //   };
 
-    if (newPassword) {
-      payload.newPassword = passwords.newPassword;
-    }
+  //   if (newPassword) {
+  //     payload.newPassword = passwords.newPassword;
+  //   }
 
-    try {
-      const response = await editUser(payload);
+  //   try {
+  //     const response = await editUser(payload);
 
-      if (response?.status === 200) {
-        toast.success('Dados atualizados com sucesso!');
-        const updatedUser = { ...handleMyData(), name };
-        localStorage.setItem('user', JSON.stringify(updatedUser));
-        setFormData({ name, email });
-        setPasswords({ newPassword: '', confirmPassword: '' });
-        setTimeout(() => {
-          if (payload.newPassword) {
-            localStorage.removeItem('jwt');
-            navigate('/login');
-          } else {
-            navigate(-1);
-          }
-        }, 2000);
-      } else {
-        toast.error('Erro ao atualizar os dados.');
-      }
-    } catch (error) {
-      console.error(error);
-      toast.error('Erro ao atualizar os dados.');
-    }
-  };
+  //     if (response?.status === 200) {
+  //       toast.success('Dados atualizados com sucesso!');
+  //       const updatedUser = { ...handleMyData(), name };
+  //       localStorage.setItem('user', JSON.stringify(updatedUser));
+  //       setFormData({ name, email });
+  //       setPasswords({ newPassword: '', confirmPassword: '' });
+  //       setTimeout(() => {
+  //         if (payload.newPassword) {
+  //           localStorage.removeItem('jwt');
+  //           navigate('/login');
+  //         } else {
+  //           navigate(-1);
+  //         }
+  //       }, 2000);
+  //     } else {
+  //       toast.error('Erro ao atualizar os dados.');
+  //     }
+  //   } catch (error) {
+  //     console.error(error);
+  //     toast.error('Erro ao atualizar os dados.');
+  //   }
+  // };
 
   return (
     <>
@@ -112,8 +169,9 @@ const EditUser = () => {
             transition={{ delay: 0.4, duration: 0.6 }}
             className="text-lg text-center tracking-wide text-white drop-shadow-lg"
           >
-            Bem vindo, {handleMyData().name}.
+            Bem vindo.
           </motion.h4>
+
           <motion.h5
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -133,6 +191,8 @@ const EditUser = () => {
             <motion.div whileFocus={{ scale: 1.02 }}>
               <label className="block text-sm font-medium text-zinc-300 mb-1">Nome</label>
               <input
+                disabled={isLoading}
+                id="name"
                 type="text"
                 name="name"
                 value={formData.name}
@@ -144,48 +204,25 @@ const EditUser = () => {
             <div>
               <label className="block text-sm font-medium text-zinc-300 mb-1">Email</label>
               <input
-                disabled
+                id="email"
                 type="email"
                 name="email"
                 value={formData.email}
                 onChange={handleChange}
+                disabled={isLoading}
                 className="w-full bg-zinc-800 border border-zinc-600 rounded-lg px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-pink-500"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-zinc-300 mb-1">Nova senha</label>
-              <input
-                placeholder="Digite uma nova senha"
-                className="w-full bg-zinc-800 border border-zinc-600 rounded-lg px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-pink-500"
-                type="password"
-                name="newPassword"
-                value={passwords.newPassword}
-                onChange={(e) => setPasswords({ ...passwords, newPassword: e.target.value })}
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-zinc-300 mb-1">
-                Confirme sua senha
-              </label>
-              <input
-                placeholder="Confirme sua nova senha"
-                className="w-full bg-zinc-800 border border-zinc-600 rounded-lg px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-pink-500"
-                type="password"
-                name="confirmPassword"
-                value={passwords.confirmPassword}
-                onChange={(e) => setPasswords({ ...passwords, confirmPassword: e.target.value })}
               />
             </div>
 
             <motion.button
+              disabled={isLoading}
               type="submit"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.97 }}
-              className="w-full py-2 px-4 bg-purple hover:bg-purple-700 transition-colors duration-200 text-white rounded-xl font-semibold shadow-md cursor-pointer"
+              className={`w-full px-4 py-2 rounded-md text-white cursor-pointer
+          ${isLoading ? 'bg-gray-400' : 'bg-purple-600 hover:bg-purple-700'}`}
             >
-              Salvar Alterações
+              {isLoading ? 'Atualizando...' : 'Atualizar'}
             </motion.button>
           </motion.form>
         </motion.div>

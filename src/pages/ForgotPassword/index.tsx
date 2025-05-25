@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom';
 import { FiMail, FiCheckCircle } from 'react-icons/fi';
 import { motion, AnimatePresence } from 'framer-motion';
 import Footer from '../../components/Footer';
-import api from '../../api/api';
 import axios from 'axios';
 
 const ForgotPassword: React.FC = () => {
