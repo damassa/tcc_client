@@ -15,3 +15,13 @@ export class UserResponse {
     this.role = role;
   }
 }
+
+export class UserUpdate {
+  constructor(
+    public name?: string,
+    public newPassword?: string,
+  ) {
+    this.name = name;
+    this.newPassword = newPassword;
+  }
+}
