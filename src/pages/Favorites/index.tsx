@@ -7,6 +7,7 @@ import { getFavoriteSeries } from '../../api/SerieApi';
 import { motion } from 'framer-motion';
 import Loading from '../../components/Loading';
 import { Link } from 'react-router-dom';
+import NoFavorites from '../NoFavorites';
 
 const Favorites: React.FC = () => {
   const [series, setSeries] = useState<SerieResponse[]>([]);
@@ -29,6 +30,10 @@ const Favorites: React.FC = () => {
 
   if (loading) {
     return <Loading />;
+  }
+
+  if (!series.length) {
+    return <NoFavorites />;
   }
 
   return (
