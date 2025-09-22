@@ -1,11 +1,12 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Logo from '../../assets/images/logo.png';
 import { FaBars, FaSearch } from 'react-icons/fa';
-import { getSeriesByName } from '../../api/SerieApi';
-import { SerieContext } from '../../context/SerieProvider';
 import { FiSend } from 'react-icons/fi';
 import AccountModal from '../AccountModal';
+import { SerieContext } from '../../context/SerieProvider';
+import { getSeriesByName } from '../../api/SerieApi';
+import { getHistory } from '../../api/HistoryApi';
 
 const Navbar: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -13,71 +14,71 @@ const Navbar: React.FC = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isAccountModalOpen, setIsAccountModalOpen] = useState(false);
   const [filteredSerie, setFilteredSerie] = useState('');
+  const [userHistory, setUserHistory] = useState<number | null>(null);
 
-  const { setSeriesSearch } = React.useContext<any>(SerieContext);
+  const { setSeriesSearch } = useContext<any>(SerieContext);
   const navigate = useNavigate();
 
+  const user = JSON.parse(localStorage.getItem('user') || 'null');
+
+  // Atualiza estado de scroll
   useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY >= 50);
-    };
+    const handleScroll = () => setIsScrolled(window.scrollY >= 50);
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  // Atualiza busca
   useEffect(() => {
     if (filteredSerie.trim() === '') {
       setSeriesSearch([]);
+      return;
     }
     handleSearch();
   }, [filteredSerie]);
 
-  const handleMyData = () => {
-    const data = JSON.parse(localStorage.getItem('user') || '{}');
-    return data;
-  };
+  // Busca histórico do usuário ao montar a navbar
+  useEffect(() => {
+    const fetchHistory = async () => {
+      if (!user) return;
+      try {
+        const history = await getHistory(user.id, 1); // exemplo: episódio 1, ajustar conforme contexto
+        if (history) setUserHistory(history.pausedAt);
+      } catch (err) {
+        console.error('Erro ao buscar histórico:', err);
+      }
+    };
+    fetchHistory();
+  }, [user]);
 
+  // Logout
   const handleLogout = () => {
     localStorage.removeItem('jwt');
+    localStorage.removeItem('user');
     navigate('/login');
   };
 
+  // Busca séries
   const handleSearch = async () => {
     try {
-      if (filteredSerie !== '') {
-        const arr = await getSeriesByName(filteredSerie);
-        if (arr.length) {
-          setSeriesSearch(arr);
-        }
-      } else {
-        setSeriesSearch([]);
-      }
+      const arr = await getSeriesByName(filteredSerie);
+      setSeriesSearch(arr.length ? arr : []);
     } catch (error) {
-      console.error('Failed to fetch series', error);
+      console.error('Falha ao buscar séries:', error);
     }
   };
 
+  // Inicials do usuário
   const handleInitials = () => {
-    const name = handleMyData().name.trim();
-    const parts = name.split(/\s+/);
-
-    if (parts.length === 1) {
-      return parts[0].substring(0, 2).toUpperCase();
-    } else {
-      const first = parts[0][0];
-      const last = parts[parts.length - 1][0];
-      return (first + last).toUpperCase();
-    }
+    if (!user?.name) return '';
+    const parts = user.name.trim().split(/\s+/);
+    if (parts.length === 1) return parts[0].substring(0, 2).toUpperCase();
+    return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
   };
-
-  const toggleUserMenu = () => setIsOpen(!isOpen);
-  const toggleMobileMenu = () => setIsMobileMenuOpen(!isMobileMenuOpen);
 
   return (
     <nav
-      className={`sticky top-0 z-10 w-full backdrop-blur-md transition-all duration-300 ease-in-out ${
-        isScrolled ? 'bg-purple shadow-md' : 'bg-transparent'
-      }`}
+      className={`sticky top-0 z-10 w-full backdrop-blur-md transition-all duration-300 ease-in-out ${isScrolled ? 'bg-purple shadow-md' : 'bg-transparent'}`}
     >
       <div className="flex justify-center">
         <div className="flex-1 px-6 flex flex-wrap items-center justify-between">
@@ -86,7 +87,6 @@ const Navbar: React.FC = () => {
             <Link to="/" className="flex items-center justify-center w-full md:w-auto">
               <img src={Logo} alt="Logo" className="h-10 md:h-12" />
             </Link>
-
             <ul className="hidden md:flex items-center space-x-8">
               <li>
                 <Link to="/" className="text-white hover:text-purple-400">
@@ -106,18 +106,17 @@ const Navbar: React.FC = () => {
             </ul>
           </div>
 
-          {/* Área de busca, usuário e mobile menu */}
+          {/* Área de busca e usuário */}
           <div className="flex justify-between items-center gap-4">
             {/* Busca Desktop */}
             <div className="relative w-full max-w-xl hidden md:block">
               <input
-                onChange={(e) => setFilteredSerie(e.target.value)}
                 type="search"
                 name="search"
                 placeholder="O que você está buscando?"
-                className="bg-transparent border border-white text-white rounded-sm w-100 h-9 py-1 px-3 pl-10 text-sm placeholder:text-white focus:outline-none focus:ring-2 focus:ring-purple-800"
+                className="bg-transparent border border-gray-500 text-white rounded-sm w-full h-9 py-1 px-3 pl-10 text-sm placeholder:text-white focus:outline-none focus:ring-2 focus:ring-purple-800"
+                onChange={(e) => setFilteredSerie(e.target.value)}
               />
-
               <button
                 onClick={handleSearch}
                 type="button"
@@ -125,47 +124,53 @@ const Navbar: React.FC = () => {
               >
                 <FiSend className="w-2 h-2 sm:w-2 sm:h-2" />
               </button>
-
               <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white text-sm pointer-events-none" />
             </div>
 
-            {/* Menu do usuário desktop */}
-            <div className="relative w-full hidden md:block">
-              <button
-                onClick={toggleUserMenu}
-                className="flex items-center justify-center w-8 h-8 rounded-full bg-green-400 hover:bg-green-800 text-black focus:outline-none focus:ring-2 focus:ring-gray-400"
-                aria-label="Abrir menu do usuário"
-              >
-                {handleInitials()}
-              </button>
-              {isOpen && (
-                <div className="absolute right-0 mt-2 py-2 w-48 rounded-md shadow-md bg-purple-950 animate-fade-in">
-                  <div className="px-4 pb-2 border-b border-gray-700">
-                    <strong className="text-white text-sm">{handleMyData().name}</strong>
-                    <h5 className=" text-white text-xs">{handleMyData().email}</h5>
+            {/* Menu do usuário */}
+            {user && (
+              <div className="relative w-full hidden md:block">
+                <button
+                  onClick={() => setIsOpen(!isOpen)}
+                  className="flex items-center justify-center w-8 h-8 rounded-full bg-green-400 hover:bg-green-800 text-black focus:outline-none focus:ring-2 focus:ring-gray-400"
+                >
+                  {handleInitials()}
+                </button>
+                {isOpen && (
+                  <div className="absolute right-0 mt-2 py-2 w-48 rounded-md shadow-md bg-purple-950 animate-fade-in">
+                    <div className="px-4 pb-2 border-b border-gray-700">
+                      <strong className="text-white text-sm">{user.name}</strong>
+                      <h5 className="text-white text-xs">{user.email}</h5>
+                      {userHistory !== null && (
+                        <p className="text-gray-300 text-xs">Último pause: {userHistory}s</p>
+                      )}
+                    </div>
+                    <button
+                      onClick={() => {
+                        setIsAccountModalOpen(true);
+                        setIsOpen(false);
+                      }}
+                      className="block w-full text-left px-4 py-2 text-white hover:text-purple-400 cursor-pointer"
+                    >
+                      Minha conta
+                    </button>
+                    <button
+                      onClick={handleLogout}
+                      className="block w-full text-left px-4 py-2 text-white hover:text-purple-400 cursor-pointer"
+                    >
+                      Sair
+                    </button>
                   </div>
-                  <button
-                    onClick={() => {
-                      setIsAccountModalOpen(true);
-                      setIsOpen(false); // opcional: fecha o menu drop-down ao abrir modal
-                    }}
-                    className="block w-full text-left px-4 py-2 text-white hover:text-purple-400 cursor-pointer"
-                  >
-                    Minha conta
-                  </button>
-                  <button
-                    onClick={handleLogout}
-                    className="block w-full text-left px-4 py-2 text-white hover:text-purple-400 cursor-pointer"
-                  >
-                    Sair
-                  </button>
-                </div>
-              )}
-            </div>
+                )}
+              </div>
+            )}
 
-            {/* Botão do menu mobile */}
+            {/* Botão menu mobile */}
             <div className="md:hidden">
-              <button onClick={toggleMobileMenu} aria-label="Abrir menu mobile">
+              <button
+                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                aria-label="Abrir menu mobile"
+              >
                 <FaBars className="text-white text-xl" />
               </button>
             </div>
@@ -175,21 +180,15 @@ const Navbar: React.FC = () => {
 
       {/* Menu mobile */}
       <div
-        className={`md:hidden bg-purple-900 shadow-md transition-all duration-300 ease-in-out origin-top transform ${
-          isMobileMenuOpen
-            ? 'scale-y-100 opacity-100 max-h-[600px] p-4'
-            : 'scale-y-0 opacity-0 max-h-0 p-0'
-        } overflow-hidden`}
+        className={`md:hidden bg-purple-900 shadow-md transition-all duration-300 ease-in-out origin-top transform ${isMobileMenuOpen ? 'scale-y-100 opacity-100 max-h-[600px] p-4' : 'scale-y-0 opacity-0 max-h-0 p-0'} overflow-hidden`}
       >
         <div className="relative w-full max-w-xl sm:block">
           <input
-            onChange={(e) => setFilteredSerie(e.target.value)}
             type="search"
-            name="search"
             placeholder="O que você está buscando?"
-            className="bg-transparent border border-white text-white rounded-sm w-100 h-9 py-1 px-3 pl-10 text-sm placeholder:text-white focus:outline-none focus:ring-2 focus:ring-purple-800"
+            className="bg-transparent border border-white text-white rounded-sm w-full h-9 py-1 px-3 pl-10 text-sm placeholder:text-white focus:outline-none focus:ring-2 focus:ring-purple-800"
+            onChange={(e) => setFilteredSerie(e.target.value)}
           />
-
           <button
             onClick={handleSearch}
             type="button"
@@ -197,9 +196,9 @@ const Navbar: React.FC = () => {
           >
             <FiSend className="w-2 h-2 sm:w-2 sm:h-2" />
           </button>
-
           <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white text-sm pointer-events-none" />
         </div>
+
         <Link to="/" className="block text-white hover:text-purple-400 py-1">
           Home
         </Link>
@@ -210,28 +209,28 @@ const Navbar: React.FC = () => {
           Favoritos
         </Link>
 
-        <div className="border-t border-gray-700 mt-3 pt-3">
-          <div className="mb-2">
-            <strong className="text-white block">{handleMyData().name}</strong>
-            <h5 className="text-sm text-white">{handleMyData().email}</h5>
+        {user && (
+          <div className="border-t border-gray-700 mt-3 pt-3">
+            <div className="mb-2">
+              <strong className="text-white block">{user.name}</strong>
+              <h5 className="text-sm text-white">{user.email}</h5>
+            </div>
+            <button
+              onClick={() => setIsAccountModalOpen(true)}
+              className="block w-full text-left px-0 py-2 text-white hover:text-purple-400"
+            >
+              Minha conta
+            </button>
+            <button
+              onClick={handleLogout}
+              className="block w-full text-left px-0 py-2 text-white hover:text-red-400"
+            >
+              Sair
+            </button>
           </div>
-          <button
-            onClick={() => {
-              setIsAccountModalOpen(true);
-              setIsOpen(false); // opcional: fecha o menu drop-down ao abrir modal
-            }}
-            className="block w-full text-left px-0 py-2 text-white hover:text-purple-400"
-          >
-            Minha conta
-          </button>
-          <button
-            onClick={handleLogout}
-            className="block w-full text-left px-0 py-2 text-white hover:text-red-400"
-          >
-            Sair
-          </button>
-        </div>
+        )}
       </div>
+
       <AccountModal isOpen={isAccountModalOpen} onClose={() => setIsAccountModalOpen(false)} />
     </nav>
   );

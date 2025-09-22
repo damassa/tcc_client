@@ -37,9 +37,9 @@ const Favorites: React.FC = () => {
   }
 
   return (
-    <>
+    <div className="flex flex-col min-h-screen">
       <Navbar />
-      <div className="w-full px-10 py-10 text-white">
+      <main className="flex-grow w-full px-10 py-10 text-white">
         <div className="flex items-center justify-center px-4 py-8">
           <div className="flex-grow h-px bg-purple opacity-50" />
           <h1 className="text-2xl font-bold text-white">Minha Lista de Favoritos</h1>
@@ -76,9 +76,9 @@ const Favorites: React.FC = () => {
         <div className="flex justify-center my-6">
           <Button />
         </div>
-      </div>
+      </main>
       <Footer />
-    </>
+    </div>
   );
 };
 
