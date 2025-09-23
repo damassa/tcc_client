@@ -25,6 +25,7 @@ const SerieDetail: React.FC = () => {
   const [showTrailer, setShowTrailer] = useState(false);
   const [selectedEpisode, setSelectedEpisode] = useState<EpisodeResponse | null>(null);
   const [startAt, setStartAt] = useState<number>(0);
+  const [hasHistory, setHasHistory] = useState(false);
   const modalRef = useRef<HTMLDivElement>(null);
   const playerRef = useRef<any>(null);
   const lastSavedRef = useRef<number>(0);
@@ -77,6 +78,7 @@ const SerieDetail: React.FC = () => {
         if (mounted) {
           const t = history?.pausedAt ?? 0;
           setStartAt(t);
+          setHasHistory(t > 0);
           lastSavedRef.current = t;
         }
       } catch (error) {
@@ -91,7 +93,7 @@ const SerieDetail: React.FC = () => {
 
   // Salva progresso ao sair da página
   useEffect(() => {
-    const handler = async (e: BeforeUnloadEvent) => {
+    const handler = async () => {
       try {
         if (playerRef.current?.getCurrentTime && selectedEpisode) {
           const t = Math.floor(playerRef.current.getCurrentTime() || 0);
@@ -139,7 +141,10 @@ const SerieDetail: React.FC = () => {
   };
 
   const handleCloseEpisodeModal = async () => {
-    if (!selectedEpisode) return;
+    if (!selectedEpisode) {
+      setShowTrailer(false);
+      return;
+    }
     try {
       let curr = lastSavedRef.current;
       if (playerRef.current?.getCurrentTime) {
@@ -151,7 +156,14 @@ const SerieDetail: React.FC = () => {
       console.error('Erro ao salvar progresso:', error);
     } finally {
       setSelectedEpisode(null);
+      setShowTrailer(false);
     }
+  };
+
+  const formatTime = (seconds: number): string => {
+    const m = Math.floor(seconds / 60);
+    const s = seconds % 60;
+    return `${m}:${s.toString().padStart(2, '0')}`;
   };
 
   const sliderSettings = {
@@ -166,6 +178,8 @@ const SerieDetail: React.FC = () => {
       { breakpoint: 480, settings: { slidesToShow: 1, slidesToScroll: 1 } },
     ],
   };
+
+  const isYoutube = (url: string) => /youtube\.com|youtu\.be/.test(url);
 
   return (
     <>
@@ -224,11 +238,24 @@ const SerieDetail: React.FC = () => {
               {episodes.map((episode) => (
                 <div
                   key={episode.id}
-                  className="px-2 rounded-lg overflow-hidden shadow-lg cursor-pointer"
+                  className="px-2 rounded-lg overflow-hidden shadow-lg cursor-pointer group"
                   onClick={() => setSelectedEpisode(episode)}
                 >
-                  <div className="w-full h-[190px] bg-black flex items-center justify-center">
+                  <div className="w-full h-[190px] bg-black flex flex-col items-center justify-center relative">
                     <p className="text-white font-bold">▶ Assistir Episódio</p>
+                    {hasHistory && selectedEpisode?.id === episode.id && (
+                      <button
+                        className="mt-2 px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white text-xs rounded-lg"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          if (playerRef.current?.seekTo) {
+                            playerRef.current.seekTo(startAt, 'seconds');
+                          }
+                        }}
+                      >
+                        Continuar de {formatTime(startAt)}
+                      </button>
+                    )}
                   </div>
                 </div>
               ))}
@@ -256,7 +283,7 @@ const SerieDetail: React.FC = () => {
             >
               <button
                 className="absolute top-2 right-2 text-white bg-black/60 hover:bg-black/80 p-2 rounded-full z-10"
-                onClick={() => setShowTrailer(false) || handleCloseEpisodeModal()}
+                onClick={handleCloseEpisodeModal}
               >
                 ✕
               </button>
@@ -269,6 +296,17 @@ const SerieDetail: React.FC = () => {
                 playing
                 onProgress={handleProgress}
                 progressInterval={1000}
+                config={{
+                  youtube: {
+                    playerVars: { modestbranding: 1, rel: 0 },
+                  },
+                  file: {
+                    attributes: {
+                      controlsList: 'nodownload',
+                      style: { borderRadius: '12px', backgroundColor: 'black' },
+                    },
+                  },
+                }}
                 onReady={() => {
                   if (!showTrailer && startAt && playerRef.current?.seekTo) {
                     playerRef.current.seekTo(startAt, 'seconds');
