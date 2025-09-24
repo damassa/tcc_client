@@ -142,7 +142,9 @@ const Navbar: React.FC = () => {
                 <div className="absolute right-0 mt-2 py-2 w-48 rounded-md shadow-md bg-purple-950 animate-fade-in">
                   <div className="px-4 pb-2 border-b border-gray-700">
                     <strong className="text-white text-sm">{user.name}</strong>
-                    <h5 className="text-white text-xs truncate max-w-[180px]">{user.email}</h5>
+                    <h5 className="text-white text-xs truncate max-w-[180px]" title={user.email}>
+                      {user.email}
+                    </h5>
                     {userHistory !== null && (
                       <p className="text-gray-300 text-xs">Último pause: {userHistory}s</p>
                     )}

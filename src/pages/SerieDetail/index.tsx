@@ -25,7 +25,7 @@ const SerieDetail: React.FC = () => {
   const [showTrailer, setShowTrailer] = useState(false);
   const [selectedEpisode, setSelectedEpisode] = useState<EpisodeResponse | null>(null);
   const [startAt, setStartAt] = useState<number>(0);
-  const [hasHistory, setHasHistory] = useState(false);
+  const [episodeHistories, setEpisodeHistories] = useState<Map<number, number>>(new Map());
   const modalRef = useRef<HTMLDivElement>(null);
   const playerRef = useRef<any>(null);
   const lastSavedRef = useRef<number>(0);
@@ -66,30 +66,36 @@ const SerieDetail: React.FC = () => {
     fetchFavorites();
   }, [id]);
 
-  // Carrega histórico do episódio selecionado
+  // Carrega históricos da série inteira
   useEffect(() => {
-    let mounted = true;
-    const fetchHistory = async () => {
-      if (!selectedEpisode) return;
+    const fetchHistories = async () => {
       const user = JSON.parse(localStorage.getItem('user') || '{}');
       if (!user.id) return;
-      try {
-        const history = await getHistory(user.id, selectedEpisode.id);
-        if (mounted) {
-          const t = history?.pausedAt ?? 0;
-          setStartAt(t);
-          setHasHistory(t > 0);
-          lastSavedRef.current = t;
+      const map = new Map<number, number>();
+
+      for (const ep of episodes) {
+        try {
+          const history = await getHistory(user.id, ep.id);
+          if (history && history.pausedAt > 0) {
+            map.set(ep.id, history.pausedAt);
+          }
+        } catch (err) {
+          console.error('Erro ao buscar histórico do episódio', ep.id, err);
         }
-      } catch (error) {
-        console.error('Erro ao buscar histórico:', error);
       }
+      setEpisodeHistories(map);
     };
-    fetchHistory();
-    return () => {
-      mounted = false;
-    };
-  }, [selectedEpisode]);
+
+    if (episodes.length > 0) fetchHistories();
+  }, [episodes]);
+
+  // Atualiza histórico do episódio selecionado
+  useEffect(() => {
+    if (!selectedEpisode) return;
+    const pausedAt = episodeHistories.get(selectedEpisode.id) || 0;
+    setStartAt(pausedAt);
+    lastSavedRef.current = pausedAt;
+  }, [selectedEpisode, episodeHistories]);
 
   // Salva progresso ao sair da página
   useEffect(() => {
@@ -129,6 +135,7 @@ const SerieDetail: React.FC = () => {
         pausedAt: seconds,
       });
       lastSavedRef.current = seconds;
+      setEpisodeHistories((prev) => new Map(prev).set(selectedEpisode.id, seconds));
     } catch (error) {
       console.error('Erro ao salvar progresso:', error);
     }
@@ -178,8 +185,6 @@ const SerieDetail: React.FC = () => {
       { breakpoint: 480, settings: { slidesToShow: 1, slidesToScroll: 1 } },
     ],
   };
-
-  const isYoutube = (url: string) => /youtube\.com|youtu\.be/.test(url);
 
   return (
     <>
@@ -235,30 +240,39 @@ const SerieDetail: React.FC = () => {
             </div>
           ) : (
             <Slider {...sliderSettings}>
-              {episodes.map((episode) => (
-                <div
-                  key={episode.id}
-                  className="px-2 rounded-lg overflow-hidden shadow-lg cursor-pointer group"
-                  onClick={() => setSelectedEpisode(episode)}
-                >
-                  <div className="w-full h-[190px] bg-black flex flex-col items-center justify-center relative">
-                    <p className="text-white font-bold">▶ Assistir Episódio</p>
-                    {hasHistory && selectedEpisode?.id === episode.id && (
-                      <button
-                        className="mt-2 px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white text-xs rounded-lg"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          if (playerRef.current?.seekTo) {
-                            playerRef.current.seekTo(startAt, 'seconds');
-                          }
-                        }}
-                      >
-                        Continuar de {formatTime(startAt)}
-                      </button>
-                    )}
+              {episodes.map((episode) => {
+                const pausedAt = episodeHistories.get(episode.id) || 0;
+                const hasProgress = pausedAt > 0;
+
+                return (
+                  <div
+                    key={episode.id}
+                    className="px-2 rounded-lg overflow-hidden shadow-lg cursor-pointer group"
+                    onClick={() => setSelectedEpisode(episode)}
+                  >
+                    <div className="w-full h-[190px] bg-black flex flex-col items-center justify-center relative">
+                      <p className="text-white font-bold">
+                        {hasProgress ? '▶ Continuar Episódio' : '▶ Assistir Episódio'}
+                      </p>
+                      {hasProgress && (
+                        <button
+                          className="mt-2 px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white text-xs rounded-lg"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setSelectedEpisode(episode);
+                            setStartAt(pausedAt);
+                            if (playerRef.current?.seekTo) {
+                              playerRef.current.seekTo(pausedAt, 'seconds');
+                            }
+                          }}
+                        >
+                          Continuar de {formatTime(pausedAt)}
+                        </button>
+                      )}
+                    </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </Slider>
           )}
         </div>

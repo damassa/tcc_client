@@ -10,22 +10,33 @@ export async function getHistory(
       params: { userId, episodeId },
     });
 
-    // Se não houver histórico, o backend retorna 200 OK com corpo vazio
-    if (!response.data || Object.keys(response.data).length === 0) return null;
-
     const history = response.data;
-    return new HistoryResponse(history.idUser, history.idEpisode, history.pausedAt);
+
+    if (!history || !history.id) return null;
+
+    return {
+      id: history.id,
+      idUser: history.idUser,
+      idEpisode: history.idEpisode,
+      pausedAt: history.pausedAt,
+    };
   } catch (error: any) {
     console.error('Erro ao buscar histórico', error);
     throw error;
   }
 }
 
-export async function saveHistory(dto: HistoryResponse): Promise<HistoryResponse> {
+export async function saveHistory(dto: Omit<HistoryResponse, 'id'>): Promise<HistoryResponse> {
   try {
     const response = await api.post('/api/v1/histories', dto);
     const history = response.data;
-    return new HistoryResponse(history.idUser, history.idEpisode, history.pausedAt);
+
+    return {
+      id: history.id,
+      idUser: history.idUser,
+      idEpisode: history.idEpisode,
+      pausedAt: history.pausedAt,
+    };
   } catch (error: any) {
     console.error('Erro ao salvar histórico', error);
     throw error;
