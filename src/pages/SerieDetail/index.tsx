@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
+import useRatings from '../../hooks/useRatings';
 import ReactPlayer from 'react-player/lazy';
 import { getHistory, saveHistory } from '../../api/HistoryApi';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -17,6 +18,9 @@ import {
 import { getEpisodesBySerieId } from '../../api/EpisodesApi';
 import { EpisodeResponse } from '../../types/episode';
 import { AlertTriangle } from 'lucide-react';
+import RatingStars from '../../components/RatingStars';
+import CommentBox from '../../components/CommentBox';
+import CommentsList from '../../components/CommentsList';
 
 const SerieDetail: React.FC = () => {
   const [serie, setSerie] = useState<SerieResponse>();
@@ -31,6 +35,9 @@ const SerieDetail: React.FC = () => {
   const lastSavedRef = useRef<number>(0);
   const SAVE_INTERVAL = 15;
   const { id } = useParams();
+  const { ratings, avgStars, addRating, loading: loadingRatings } = useRatings(Number(id));
+
+  const user = JSON.parse(localStorage.getItem('user') || '{}');
 
   // Fecha modal ao clicar fora ou esc
   useEffect(() => {
@@ -58,6 +65,7 @@ const SerieDetail: React.FC = () => {
     const fetchEpisodes = async () => setEpisodes(await getEpisodesBySerieId(Number(id)));
     const fetchFavorites = async () => {
       const user = JSON.parse(localStorage.getItem('user') || '{}');
+      if (!user.id) return;
       const count = await countFavoritesBySerieId(Number(id), user.id);
       setIsFavorite(count > 0);
     };
@@ -73,23 +81,26 @@ const SerieDetail: React.FC = () => {
       if (!user.id) return;
       const map = new Map<number, number>();
 
-      for (const ep of episodes) {
-        try {
-          const history = await getHistory(user.id, ep.id);
-          if (history && history.pausedAt > 0) {
-            map.set(ep.id, history.pausedAt);
+      await Promise.all(
+        episodes.map(async (ep) => {
+          try {
+            const history = await getHistory(user.id, ep.id);
+            if (history && history.pausedAt > 0) {
+              map.set(ep.id, history.pausedAt);
+            }
+          } catch (err) {
+            console.error('Erro ao buscar histórico do episódio', ep.id, err);
           }
-        } catch (err) {
-          console.error('Erro ao buscar histórico do episódio', ep.id, err);
-        }
-      }
+        }),
+      );
+
       setEpisodeHistories(map);
     };
 
     if (episodes.length > 0) fetchHistories();
   }, [episodes]);
 
-  // Atualiza histórico do episódio selecionado
+  // Atualiza startAt ao selecionar episódio
   useEffect(() => {
     if (!selectedEpisode) return;
     const pausedAt = episodeHistories.get(selectedEpisode.id) || 0;
@@ -155,8 +166,7 @@ const SerieDetail: React.FC = () => {
     try {
       let curr = lastSavedRef.current;
       if (playerRef.current?.getCurrentTime) {
-        const t = Math.floor(playerRef.current.getCurrentTime() || 0);
-        curr = t;
+        curr = Math.floor(playerRef.current.getCurrentTime() || 0);
       }
       await saveProgress(curr);
     } catch (error) {
@@ -198,22 +208,48 @@ const SerieDetail: React.FC = () => {
             className="w-full h-full object-cover opacity-70"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black via-black/70 to-transparent flex flex-col justify-end px-6 py-10">
-            <div className="max-w-5xl mx-auto">
-              <h1 className="text-3xl md:text-5xl font-extrabold mb-2 drop-shadow-lg">
-                {serie?.name}
-              </h1>
-              <h2 className="text-xl md:text-2xl font-semibold drop-shadow">{serie?.year}</h2>
-              <div className="flex mt-4 sm:justify-between justify-center">
-                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-center gap-3 sm:gap-6 w-full mt-4">
+            <div className="max-w-5xl mx-auto space-y-4">
+              {/* Nome, ano e categoria */}
+              <div>
+                <h1 className="text-3xl md:text-5xl font-extrabold mb-2 drop-shadow-lg">
+                  {serie?.name}
+                </h1>
+                <div className="flex items-center gap-3 text-gray-300 drop-shadow">
+                  <span className="text-lg md:text-xl font-medium">{serie?.year}</span>
+                  {serie?.categoryName && (
+                    <span className="px-3 py-1 text-xs md:text-sm bg-white/10 border border-white/20 rounded-full text-gray-200">
+                      {serie.categoryName}
+                    </span>
+                  )}
+                </div>
+                {/* Média de estrelas */}
+                <div className="mt-4 fle items-center gap-2">
+                  <span className="text-yellow-400 font-bold text-lg">
+                    ⭐ {avgStars.toFixed(1)} / 5
+                  </span>
+                  <span className="tetx-gray-400 text-sm ml-1">({ratings.length} avaliações)</span>
+                </div>
+              </div>
+
+              {/* Sinopse */}
+              {serie?.plot && (
+                <p className="text-sm md:text-base text-gray-200 leading-relaxed line-clamp-3 md:line-clamp-5">
+                  {serie.plot}
+                </p>
+              )}
+
+              {/* Botões */}
+              <div className="flex mt-4 sm:justify-start justify-center">
+                <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-6 w-full">
                   <button
                     onClick={toggleFavorite}
-                    className="w-full sm:w-auto px-6 py-3 bg-yellow-400 hover:bg-yellow-500 text-black rounded-2xl font-bold text-sm sm:text-base shadow-md hover:shadow-lg transition duration-300"
+                    className="w-full cursor-pointer sm:w-auto px-6 py-3 bg-yellow-400 hover:bg-yellow-500 text-black rounded-2xl font-bold text-sm sm:text-base shadow-md hover:shadow-lg transition duration-300"
                   >
                     {isFavorite ? 'Remover dos Favoritos' : 'Adicionar aos Favoritos'}
                   </button>
                   <button
                     onClick={() => setShowTrailer(true)}
-                    className="w-full sm:w-auto px-6 py-3 bg-red-600 hover:bg-red-700 text-white rounded-2xl font-bold text-sm sm:text-base shadow-md hover:shadow-lg transition duration-300"
+                    className="w-full cursor-pointer sm:w-auto px-6 py-3 bg-red-600 hover:bg-red-700 text-white rounded-2xl font-bold text-sm sm:text-base shadow-md hover:shadow-lg transition duration-300"
                   >
                     Assistir vídeo de abertura
                   </button>
@@ -255,19 +291,9 @@ const SerieDetail: React.FC = () => {
                         {hasProgress ? '▶ Continuar Episódio' : '▶ Assistir Episódio'}
                       </p>
                       {hasProgress && (
-                        <button
-                          className="mt-2 px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white text-xs rounded-lg"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setSelectedEpisode(episode);
-                            setStartAt(pausedAt);
-                            if (playerRef.current?.seekTo) {
-                              playerRef.current.seekTo(pausedAt, 'seconds');
-                            }
-                          }}
-                        >
-                          Continuar de {formatTime(pausedAt)}
-                        </button>
+                        <span className="mt-2 text-xs text-gray-300">
+                          Última vez em {formatTime(pausedAt)}
+                        </span>
                       )}
                     </div>
                   </div>
@@ -275,6 +301,28 @@ const SerieDetail: React.FC = () => {
               })}
             </Slider>
           )}
+        </div>
+
+        {/* Avaliações */}
+        <div className="px-4 md:px-10 py-10 max-w-6xl mx-auto">
+          <h2 className="text-2xl font-bold mb-4">Avaliações</h2>
+
+          <RatingStars
+            onChange={(stars) =>
+              addRating({ stars, idSerie: Number(serie?.id), idUser: user?.id, comment: '' })
+            }
+          />
+        </div>
+        <div className="px-4 md:px-10 py-10  max-w-6xl mx-auto">
+          <div className="mt-6">
+            <h2 className="text-xl font-bold">Comentários</h2>
+            <CommentBox serieId={Number(serie?.id)} userId={user?.id} onSubmit={addRating} />
+            {loadingRatings ? (
+              <p className="text-gray-400 text-sm">Carregando comentários...</p> // Exibir um indicador de carregamento enquanto os comentários estiverem sendo carregados</p>
+            ) : (
+              <CommentsList comments={ratings} />
+            )}
+          </div>
         </div>
       </div>
 
@@ -322,7 +370,7 @@ const SerieDetail: React.FC = () => {
                   },
                 }}
                 onReady={() => {
-                  if (!showTrailer && startAt && playerRef.current?.seekTo) {
+                  if (!showTrailer && startAt > 0 && playerRef.current?.seekTo) {
                     playerRef.current.seekTo(startAt, 'seconds');
                   }
                 }}

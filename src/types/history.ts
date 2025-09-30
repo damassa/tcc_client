@@ -10,3 +10,9 @@ export class HistoryResponse {
     this.pausedAt = pausedAt;
   }
 }
+
+export interface HistoryRequest {
+  idUser: number;
+  idEpisode: number;
+  pausedAt: number;
+}
