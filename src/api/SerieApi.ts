@@ -1,3 +1,4 @@
+import { PageResponse } from '../types/page';
 import { SerieResponse } from '../types/serie';
 import api from './api';
 
@@ -12,6 +13,19 @@ export const getAllSeries = async (): Promise<SerieResponse[]> => {
   }
   return [];
 };
+
+// Busca todas as séries paginadas para ter o botão de carregar mais
+export async function getSeriesPerPage(
+  page = 0,
+  size = 4,
+  signal?: AbortSignal,
+): Promise<PageResponse<SerieResponse>> {
+  const res = await api.get<PageResponse<SerieResponse>>('/api/v1/series/pageable', {
+    params: { page, size },
+    signal,
+  });
+  return res.data;
+}
 
 // Busca todas as séries ordenadas por ano (da mais recente até a mais antiga)
 export const getSeriesOrderedByYear = async (): Promise<SerieResponse[]> => {
@@ -102,6 +116,19 @@ export const getSeriesByName = async (name: string): Promise<SerieResponse[]> =>
     console.error(error);
   }
   return [];
+};
+
+export const getTopRatedSeries = async (
+  limit: number = 10,
+  signal?: AbortSignal,
+): Promise<SerieResponse[]> => {
+  try {
+    const res = await api.get(`/api/v1/series/top-rated?limit=${limit}`, { signal });
+    return res.data;
+  } catch (error) {
+    console.error('Erro ao buscar séries mais bem avaliadas.', error);
+    throw error;
+  }
 };
 
 // Deleta uma série

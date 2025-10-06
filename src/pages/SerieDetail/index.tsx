@@ -19,8 +19,6 @@ import { getEpisodesBySerieId } from '../../api/EpisodesApi';
 import { EpisodeResponse } from '../../types/episode';
 import { AlertTriangle } from 'lucide-react';
 import RatingStars from '../../components/RatingStars';
-import CommentBox from '../../components/CommentBox';
-import CommentsList from '../../components/CommentsList';
 
 const SerieDetail: React.FC = () => {
   const [serie, setSerie] = useState<SerieResponse>();
@@ -30,25 +28,25 @@ const SerieDetail: React.FC = () => {
   const [selectedEpisode, setSelectedEpisode] = useState<EpisodeResponse | null>(null);
   const [startAt, setStartAt] = useState<number>(0);
   const [episodeHistories, setEpisodeHistories] = useState<Map<number, number>>(new Map());
+
   const modalRef = useRef<HTMLDivElement>(null);
   const playerRef = useRef<any>(null);
   const lastSavedRef = useRef<number>(0);
   const SAVE_INTERVAL = 15;
+
   const { id } = useParams();
-  const { ratings, avgStars, addRating, loading: loadingRatings } = useRatings(Number(id));
+  const { ratings, stats, addRating, loading: loadingRatings } = useRatings(Number(id));
 
   const user = JSON.parse(localStorage.getItem('user') || '{}');
 
-  // Fecha modal ao clicar fora ou esc
+  // --- FECHAR MODAL AO CLICAR FORA OU ESC ---
   useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (modalRef.current && !modalRef.current.contains(event.target as Node)) {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (modalRef.current && !modalRef.current.contains(e.target as Node))
         handleCloseEpisodeModal();
-      }
     };
-    const handleEsc = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') handleCloseEpisodeModal();
-    };
+    const handleEsc = (e: KeyboardEvent) => e.key === 'Escape' && handleCloseEpisodeModal();
+
     if (selectedEpisode || showTrailer) {
       document.addEventListener('mousedown', handleClickOutside);
       document.addEventListener('keydown', handleEsc);
@@ -59,22 +57,26 @@ const SerieDetail: React.FC = () => {
     };
   }, [selectedEpisode, showTrailer]);
 
-  // Carrega série, episódios e favoritos
+  // --- CARREGAR DADOS PRINCIPAIS ---
   useEffect(() => {
-    const fetchSerie = async () => setSerie(await getSerieById(Number(id)));
-    const fetchEpisodes = async () => setEpisodes(await getEpisodesBySerieId(Number(id)));
-    const fetchFavorites = async () => {
+    const fetchAll = async () => {
+      const [serieData, eps] = await Promise.all([
+        getSerieById(Number(id)),
+        getEpisodesBySerieId(Number(id)),
+      ]);
+      setSerie(serieData);
+      setEpisodes(eps);
+
       const user = JSON.parse(localStorage.getItem('user') || '{}');
-      if (!user.id) return;
-      const count = await countFavoritesBySerieId(Number(id), user.id);
-      setIsFavorite(count > 0);
+      if (user.id) {
+        const favCount = await countFavoritesBySerieId(Number(id), user.id);
+        setIsFavorite(favCount > 0);
+      }
     };
-    fetchSerie();
-    fetchEpisodes();
-    fetchFavorites();
+    fetchAll();
   }, [id]);
 
-  // Carrega históricos da série inteira
+  // --- HISTÓRICO DE EPISÓDIOS ---
   useEffect(() => {
     const fetchHistories = async () => {
       const user = JSON.parse(localStorage.getItem('user') || '{}');
@@ -85,22 +87,19 @@ const SerieDetail: React.FC = () => {
         episodes.map(async (ep) => {
           try {
             const history = await getHistory(user.id, ep.id);
-            if (history && history.pausedAt > 0) {
-              map.set(ep.id, history.pausedAt);
-            }
+            if (history?.pausedAt > 0) map.set(ep.id, history.pausedAt);
           } catch (err) {
             console.error('Erro ao buscar histórico do episódio', ep.id, err);
           }
         }),
       );
-
       setEpisodeHistories(map);
     };
 
     if (episodes.length > 0) fetchHistories();
   }, [episodes]);
 
-  // Atualiza startAt ao selecionar episódio
+  // --- ATUALIZA O PONTO DE RETOMADA ---
   useEffect(() => {
     if (!selectedEpisode) return;
     const pausedAt = episodeHistories.get(selectedEpisode.id) || 0;
@@ -108,24 +107,20 @@ const SerieDetail: React.FC = () => {
     lastSavedRef.current = pausedAt;
   }, [selectedEpisode, episodeHistories]);
 
-  // Salva progresso ao sair da página
+  // --- SALVA AO SAIR DA PÁGINA ---
   useEffect(() => {
     const handler = async () => {
-      try {
-        if (playerRef.current?.getCurrentTime && selectedEpisode) {
-          const t = Math.floor(playerRef.current.getCurrentTime() || 0);
-          await saveProgress(t);
-        }
-      } catch (error) {
-        console.error('Erro ao salvar progresso:', error);
+      if (selectedEpisode && playerRef.current?.getCurrentTime) {
+        const t = Math.floor(playerRef.current.getCurrentTime() || 0);
+        await saveProgress(t);
       }
     };
     window.addEventListener('beforeunload', handler);
     return () => window.removeEventListener('beforeunload', handler);
   }, [selectedEpisode]);
 
+  // --- FAVORITOS ---
   const toggleFavorite = async () => {
-    const user = JSON.parse(localStorage.getItem('user') || '{}');
     if (!user.id) return;
     if (isFavorite) {
       await removeSerieFromFavorites(Number(id), user.id);
@@ -136,8 +131,8 @@ const SerieDetail: React.FC = () => {
     }
   };
 
+  // --- SALVAR PROGRESSO ---
   const saveProgress = async (seconds: number) => {
-    const user = JSON.parse(localStorage.getItem('user') || '{}');
     if (!user.id || !selectedEpisode) return;
     try {
       await saveHistory({
@@ -164,13 +159,11 @@ const SerieDetail: React.FC = () => {
       return;
     }
     try {
-      let curr = lastSavedRef.current;
-      if (playerRef.current?.getCurrentTime) {
-        curr = Math.floor(playerRef.current.getCurrentTime() || 0);
-      }
+      const curr =
+        playerRef.current?.getCurrentTime?.() != null
+          ? Math.floor(playerRef.current.getCurrentTime())
+          : lastSavedRef.current;
       await saveProgress(curr);
-    } catch (error) {
-      console.error('Erro ao salvar progresso:', error);
     } finally {
       setSelectedEpisode(null);
       setShowTrailer(false);
@@ -196,6 +189,7 @@ const SerieDetail: React.FC = () => {
     ],
   };
 
+  // ----------------- JSX -----------------
   return (
     <>
       <Navbar />
@@ -209,51 +203,66 @@ const SerieDetail: React.FC = () => {
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black via-black/70 to-transparent flex flex-col justify-end px-6 py-10">
             <div className="max-w-5xl mx-auto space-y-4">
-              {/* Nome, ano e categoria */}
-              <div>
-                <h1 className="text-3xl md:text-5xl font-extrabold mb-2 drop-shadow-lg">
-                  {serie?.name}
-                </h1>
-                <div className="flex items-center gap-3 text-gray-300 drop-shadow">
-                  <span className="text-lg md:text-xl font-medium">{serie?.year}</span>
-                  {serie?.categoryName && (
-                    <span className="px-3 py-1 text-xs md:text-sm bg-white/10 border border-white/20 rounded-full text-gray-200">
-                      {serie.categoryName}
-                    </span>
-                  )}
-                </div>
-                {/* Média de estrelas */}
-                <div className="mt-4 fle items-center gap-2">
-                  <span className="text-yellow-400 font-bold text-lg">
-                    ⭐ {avgStars.toFixed(1)} / 5
+              <h1 className="text-3xl md:text-5xl font-extrabold mb-2 drop-shadow-lg">
+                {serie?.name}
+              </h1>
+
+              <div className="flex items-center gap-3 text-gray-300 drop-shadow">
+                <span className="text-lg md:text-xl font-medium">{serie?.year}</span>
+                {serie?.categoryName && (
+                  <span className="px-3 py-1 text-xs md:text-sm bg-white/10 border border-white/20 rounded-full text-gray-200">
+                    {serie.categoryName}
                   </span>
-                  <span className="tetx-gray-400 text-sm ml-1">({ratings.length} avaliações)</span>
-                </div>
+                )}
               </div>
 
-              {/* Sinopse */}
+              {/* --- AVALIAÇÃO --- */}
+              <div className="mt-4 flex items-center gap-3 flex-wrap">
+                {loadingRatings ? (
+                  <span className="text-gray-400 text-sm">Carregando avaliações...</span>
+                ) : (
+                  <>
+                    <span className="text-yellow-400 font-bold text-lg">
+                      ⭐ {stats.average.toFixed(1)} / 5
+                    </span>
+                    <span className="text-gray-400 text-sm">
+                      ({stats.totalVotes} {stats.totalVotes === 1 ? 'avaliação' : 'avaliações'})
+                    </span>
+                  </>
+                )}
+
+                {user?.id && (
+                  <div className="mt-2">
+                    <RatingStars
+                      onChange={(stars) =>
+                        addRating({ stars, idSerie: Number(serie?.id), idUser: user.id })
+                      }
+                    />
+                  </div>
+                )}
+              </div>
+
+              {/* --- SINOPSE --- */}
               {serie?.plot && (
-                <p className="text-sm md:text-base text-gray-200 leading-relaxed line-clamp-3 md:line-clamp-5">
+                <p className="text-sm md:text-base text-gray-200 leading-relaxed line-clamp-5">
                   {serie.plot}
                 </p>
               )}
 
-              {/* Botões */}
-              <div className="flex mt-4 sm:justify-start justify-center">
-                <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-6 w-full">
-                  <button
-                    onClick={toggleFavorite}
-                    className="w-full cursor-pointer sm:w-auto px-6 py-3 bg-yellow-400 hover:bg-yellow-500 text-black rounded-2xl font-bold text-sm sm:text-base shadow-md hover:shadow-lg transition duration-300"
-                  >
-                    {isFavorite ? 'Remover dos Favoritos' : 'Adicionar aos Favoritos'}
-                  </button>
-                  <button
-                    onClick={() => setShowTrailer(true)}
-                    className="w-full cursor-pointer sm:w-auto px-6 py-3 bg-red-600 hover:bg-red-700 text-white rounded-2xl font-bold text-sm sm:text-base shadow-md hover:shadow-lg transition duration-300"
-                  >
-                    Assistir vídeo de abertura
-                  </button>
-                </div>
+              {/* --- BOTÕES --- */}
+              <div className="flex mt-4 gap-4 flex-wrap">
+                <button
+                  onClick={toggleFavorite}
+                  className="px-6 py-3 bg-yellow-400 hover:bg-yellow-500 text-black rounded-2xl font-bold shadow-md transition"
+                >
+                  {isFavorite ? 'Remover dos Favoritos' : 'Adicionar aos Favoritos'}
+                </button>
+                <button
+                  onClick={() => setShowTrailer(true)}
+                  className="px-6 py-3 bg-red-600 hover:bg-red-700 text-white rounded-2xl font-bold shadow-md transition"
+                >
+                  Assistir vídeo de abertura
+                </button>
               </div>
             </div>
           </div>
@@ -279,15 +288,14 @@ const SerieDetail: React.FC = () => {
               {episodes.map((episode) => {
                 const pausedAt = episodeHistories.get(episode.id) || 0;
                 const hasProgress = pausedAt > 0;
-
                 return (
                   <div
                     key={episode.id}
-                    className="px-2 rounded-lg overflow-hidden shadow-lg cursor-pointer group"
+                    className="px-2 rounded-lg overflow-hidden shadow-lg cursor-pointer"
                     onClick={() => setSelectedEpisode(episode)}
                   >
-                    <div className="w-full h-[190px] bg-black flex flex-col items-center justify-center relative">
-                      <p className="text-white font-bold">
+                    <div className="w-full h-[190px] bg-black flex flex-col items-center justify-center relative group">
+                      <p className="text-white font-bold group-hover:text-yellow-300 transition">
                         {hasProgress ? '▶ Continuar Episódio' : '▶ Assistir Episódio'}
                       </p>
                       {hasProgress && (
@@ -302,31 +310,9 @@ const SerieDetail: React.FC = () => {
             </Slider>
           )}
         </div>
-
-        {/* Avaliações */}
-        <div className="px-4 md:px-10 py-10 max-w-6xl mx-auto">
-          <h2 className="text-2xl font-bold mb-4">Avaliações</h2>
-
-          <RatingStars
-            onChange={(stars) =>
-              addRating({ stars, idSerie: Number(serie?.id), idUser: user?.id, comment: '' })
-            }
-          />
-        </div>
-        <div className="px-4 md:px-10 py-10  max-w-6xl mx-auto">
-          <div className="mt-6">
-            <h2 className="text-xl font-bold">Comentários</h2>
-            <CommentBox serieId={Number(serie?.id)} userId={user?.id} onSubmit={addRating} />
-            {loadingRatings ? (
-              <p className="text-gray-400 text-sm">Carregando comentários...</p> // Exibir um indicador de carregamento enquanto os comentários estiverem sendo carregados</p>
-            ) : (
-              <CommentsList comments={ratings} />
-            )}
-          </div>
-        </div>
       </div>
 
-      {/* Modal de vídeo */}
+      {/* Modal do vídeo */}
       <AnimatePresence>
         {(selectedEpisode || showTrailer) && (
           <motion.div
@@ -359,9 +345,7 @@ const SerieDetail: React.FC = () => {
                 onProgress={handleProgress}
                 progressInterval={1000}
                 config={{
-                  youtube: {
-                    playerVars: { modestbranding: 1, rel: 0 },
-                  },
+                  youtube: { playerVars: { modestbranding: 1, rel: 0 } },
                   file: {
                     attributes: {
                       controlsList: 'nodownload',
