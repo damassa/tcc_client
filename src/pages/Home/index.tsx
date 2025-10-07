@@ -24,7 +24,10 @@ const Home: React.FC = () => {
   const [isLast, setIsLast] = useState(false);
   const fetchedPagesRef = useRef<Set<number>>(new Set());
   const [topRated, setTopRated] = useState<SerieResponse[]>([]);
-  const [loadingTopRated, setLoadingTopRated] = useState(true);
+  const [topRatedPage, setTopRatedPage] = useState(0);
+  const [topRatedIsLast, setTopRatedIsLast] = useState(false);
+  const [loadingMoreTopRated, setLoadingMoreTopRated] = useState(false);
+  const fetchedTopRatedPagesRef = useRef<Set<number>>(new Set());
 
   const { seriesSearch } = React.useContext<any>(SerieContext);
 
@@ -60,26 +63,38 @@ const Home: React.FC = () => {
     }
   };
 
-  const fetchTopRatedSeries = async (signal?: AbortSignal) => {
-    setLoadingTopRated(true);
+  const fetchTopRatedSeries = async (p: number, signal?: AbortSignal) => {
+    if (fetchedTopRatedPagesRef.current.has(p)) return;
+    if (topRatedIsLast) return;
+
+    if (p === 0) setLoadingMoreTopRated(true);
+    else setLoadingMoreTopRated(true);
+
     try {
-      const data = await getTopRatedSeries(8, signal);
-      setTopRated(data);
-    } catch (error) {
-      if (error?.name === 'CanceledError' || error?.message === 'canceled') {
-      } else {
-        console.error('Erro ao buscar séries mais bem avaliadas:', error);
+      const data = await getTopRatedSeries(p, PAGE_SIZE, signal);
+
+      setTopRated((prev) => {
+        const existingIds = new Set(prev.map((s) => s.id));
+        const toAppend = data.content.filter((s) => !existingIds.has(s.id));
+        return [...prev, ...toAppend];
+      });
+
+      fetchedTopRatedPagesRef.current.add(p);
+      setTopRatedIsLast(Boolean(data.last));
+    } catch (err: any) {
+      if (err?.name !== 'CanceledError' && err?.message !== 'canceled') {
+        console.error('Erro ao buscar séries mais bem avaliadas:', err);
       }
     } finally {
-      setLoadingTopRated(false);
+      setLoadingMoreTopRated(false);
     }
   };
 
   useEffect(() => {
     const controller = new AbortController();
-    fetchTopRatedSeries(controller.signal);
+    fetchTopRatedSeries(topRatedPage, controller.signal);
     return () => controller.abort();
-  }, []);
+  }, [topRatedPage]);
 
   // Efeito: quando page mudar (não em modo busca) faz fetch
   useEffect(() => {
@@ -153,7 +168,7 @@ const Home: React.FC = () => {
         <Carousel />
 
         {/* Séries mais bem avaliadas */}
-        <h3 className="text-2xl font-bold mt-10 mb-4">Séries mais bem avaliadas</h3>
+        <h3 className="text-2xl font-bold mt-10 mb-4">Mais Votadas</h3>
         <div className="flex flex-wrap justify-center gap-6">
           {topRated.map((serie, index) => (
             <motion.div
@@ -180,6 +195,14 @@ const Home: React.FC = () => {
             </motion.div>
           ))}
         </div>
+        {!topRatedIsLast && (
+          <div className="flex justify-center my-6">
+            <LoadMoreButton
+              onClick={() => setTopRatedPage((prev) => prev + 1)}
+              disabled={loadingMoreTopRated}
+            />
+          </div>
+        )}
 
         <h3 className="text-2xl font-bold mt-10 mb-4">Séries Populares</h3>
         <div className="flex flex-wrap justify-center gap-6">

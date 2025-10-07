@@ -118,37 +118,19 @@ export const getSeriesByName = async (name: string): Promise<SerieResponse[]> =>
   return [];
 };
 
-export const getTopRatedSeries = async (
-  limit: number = 10,
+export async function getTopRatedSeries(
+  page = 0,
+  size = 4,
   signal?: AbortSignal,
-): Promise<SerieResponse[]> => {
+): Promise<PageResponse<SerieResponse>> {
   try {
-    const res = await api.get(`/api/v1/series/top-rated?limit=${limit}`, { signal });
+    const res = await api.get<PageResponse<SerieResponse>>(`/api/v1/series/top-rated/pageable`, {
+      params: { page, size },
+      signal,
+    });
     return res.data;
   } catch (error) {
     console.error('Erro ao buscar séries mais bem avaliadas.', error);
     throw error;
   }
-};
-
-// Deleta uma série
-// export const deleteSerie = async (link: string): Promise<SerieResponse> => {
-//   const res = await axios.delete(link, getAxiosConfig());
-//   return res.data;
-// };
-
-// // Adiciona uma série
-// export const addSerie = async (serie: SerieResponse): Promise<SerieResponse> => {
-//   const res = await axios.post(
-//     `${import.meta.env.VITE_API_URL}/api/v1/series`,
-//     serie,
-//     getAxiosConfig(),
-//   );
-//   return res.data;
-// };
-
-// // Altera uma série
-// export const editSerie = async (serieEntry: SerieEntry): Promise<SerieResponse> => {
-//   const res = await axios.put(serieEntry.url, serieEntry.serie, getAxiosConfig());
-//   return res.data;
-// };T extends any = any
+}
