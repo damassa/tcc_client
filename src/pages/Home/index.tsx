@@ -17,12 +17,15 @@ import { SerieContext } from '../../context/SerieProvider';
 const PAGE_SIZE = 4;
 
 const Home: React.FC = () => {
+  // Estados para carregar séries
   const [series, setSeries] = useState<SerieResponse[]>([]);
   const [loadingInitial, setLoadingInitial] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
   const [page, setPage] = useState(0);
   const [isLast, setIsLast] = useState(false);
   const fetchedPagesRef = useRef<Set<number>>(new Set());
+
+  // Estados para carregar séries mais bem avaliadas
   const [topRated, setTopRated] = useState<SerieResponse[]>([]);
   const [topRatedPage, setTopRatedPage] = useState(0);
   const [topRatedIsLast, setTopRatedIsLast] = useState(false);
@@ -54,8 +57,6 @@ const Home: React.FC = () => {
     } catch (err: any) {
       if (err?.name === 'CanceledError' || err?.message === 'canceled') {
         // request cancelado — ignora
-      } else {
-        console.error('Erro ao buscar séries (page):', err);
       }
     } finally {
       setLoadingInitial(false);
@@ -65,8 +66,13 @@ const Home: React.FC = () => {
 
   const fetchTopRatedSeries = async (p: number, signal?: AbortSignal) => {
     if (fetchedTopRatedPagesRef.current.has(p)) return;
-    if (topRatedIsLast) return;
-
+    // if (topRatedIsLast) return;
+    if (topRatedIsLast) {
+      console.warn(
+        'Tentativa de carregar a página ${p} de séries mais bem avaliadas, mas já chegou ao fim',
+      );
+      return;
+    }
     if (p === 0) setLoadingMoreTopRated(true);
     else setLoadingMoreTopRated(true);
 
@@ -173,7 +179,7 @@ const Home: React.FC = () => {
           {topRated.map((serie, index) => (
             <motion.div
               key={serie.id}
-              className="w-36 sm:w-40 md:w-44 lg:w-48 gap-6 rounded-lg border border-zinc-700 shadow-md"
+              className="w-36 sm:w-40 md:w-44 lg:w-48 xl:w-56 2xl:w-100 gap-6 rounded-lg border border-zinc-700 shadow-md"
               initial={{ opacity: 0, scale: 0.95, y: 30 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               transition={{ duration: 0.3, delay: index * 0.03 }}
@@ -182,7 +188,7 @@ const Home: React.FC = () => {
             >
               <Link to={`/detail/${serie.id}`}>
                 <img
-                  className="w-full h-48 object-cover rounded-lg shadow-md transition-shadow"
+                  className="w-full h-48 lg:h-64 object-cover rounded-lg shadow-md transition-shadow"
                   src={serie.image}
                   alt={serie.name}
                   title={serie.name}
@@ -195,7 +201,7 @@ const Home: React.FC = () => {
             </motion.div>
           ))}
         </div>
-        {!topRatedIsLast && (
+        {topRated.length > 0 && (
           <div className="flex justify-center my-6">
             <LoadMoreButton
               onClick={() => setTopRatedPage((prev) => prev + 1)}
@@ -209,7 +215,7 @@ const Home: React.FC = () => {
           {seriesToShow.map((serie, index) => (
             <motion.div
               key={serie.id}
-              className="w-36 sm:w-40 md:w-44 lg:w-48 gap-6 rounded-lg border border-zinc-700 shadow-md"
+              className="w-36 sm:w-40 md:w-44 lg:w-48 xl:w-56 2xl:w-100 gap-6 rounded-lg border border-zinc-700 shadow-md"
               initial={{ opacity: 0, scale: 0.95, y: 30 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               transition={{ duration: 0.3, delay: index * 0.03 }}
@@ -218,7 +224,7 @@ const Home: React.FC = () => {
             >
               <Link to={`/detail/${serie.id}`}>
                 <img
-                  className="w-full h-48 object-cover rounded-t-lg shadow-md transition-shadow"
+                  className="w-full h-48 lg:h-64 object-cover rounded-t-lg shadow-md transition-shadow"
                   src={serie.image}
                   alt={serie.name}
                   title={serie.name}

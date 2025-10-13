@@ -9,6 +9,8 @@ export class SerieResponse {
     public plot: string,
     public categoryId: number,
     public categoryName: string,
+    public avgRating?: number,
+    public totalRatings?: number,
   ) {
     this.id = id;
     this.name = name;
@@ -19,5 +21,7 @@ export class SerieResponse {
     this.plot = plot;
     this.categoryId = categoryId;
     this.categoryName = categoryName;
+    this.avgRating = avgRating ?? 0;
+    this.totalRatings = totalRatings ?? 0;
   }
 }
