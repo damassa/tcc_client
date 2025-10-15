@@ -8,11 +8,11 @@ import { getCategories, getSeriesByCategory } from '../../api/CategoryApi';
 import { motion } from 'framer-motion';
 import { SerieResponse } from '../../types/serie';
 
-// import { Container } from './styles';
-
 const Categories: React.FC = () => {
   const [categories, setCategories] = useState<CategoryResponse[]>([]);
-  const [categoryWithSeries, setCategoryWithSeries] = useState({});
+  const [categoryWithSeries, setCategoryWithSeries] = useState<{ [key: number]: SerieResponse[] }>(
+    {},
+  );
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -77,7 +77,6 @@ const Categories: React.FC = () => {
                     transition={{ duration: 0.3, delay: index * 0.05 }}
                     whileHover={{ scale: 1.05 }}
                     whileInView={{ opacity: 1, y: 0 }}
-                    initial={{ opacity: 0, y: 20 }}
                     viewport={{ once: true, amount: 0.2 }}
                   >
                     <Link to={`/detail/${serie.id}`}>
@@ -104,18 +103,3 @@ const Categories: React.FC = () => {
 };
 
 export default Categories;
-{
-  /* <div
-                    key={serie.id}
-                    className="w-40 rounded-lg border shadow-md hover:shadow-lg transition-shadow"
-                  >
-                    <Link to={`/detail/${serie.id}`}>
-                      <img
-                        className="w-full h-50 rounded shadow-md hover:shadow-lg transition-shadow"
-                        src={serie.image}
-                        alt={serie.name}
-                        title={serie.name}
-                      />
-                    </Link>
-                  </div> */
-}
