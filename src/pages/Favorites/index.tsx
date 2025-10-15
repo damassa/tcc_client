@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import Navbar from '../../components/Navbar';
-import Button from '../../components/LoadMoreButton';
 import Footer from '../../components/Footer';
 import { SerieResponse } from '../../types/serie';
 import { getFavoriteSeries } from '../../api/SerieApi';
