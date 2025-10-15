@@ -35,7 +35,7 @@ const SerieDetail: React.FC = () => {
   const SAVE_INTERVAL = 15;
 
   const { id } = useParams();
-  const { ratings, stats, addRating, loading: loadingRatings } = useRatings(Number(id));
+  const { stats, addRating, loading: loadingRatings } = useRatings(Number(id));
 
   const user = JSON.parse(localStorage.getItem('user') || '{}');
 
@@ -87,7 +87,9 @@ const SerieDetail: React.FC = () => {
         episodes.map(async (ep) => {
           try {
             const history = await getHistory(user.id, ep.id);
-            if (history?.pausedAt > 0) map.set(ep.id, history.pausedAt);
+            if (history) {
+              if (history.pausedAt > 0) map.set(ep.id, history.pausedAt);
+            }
           } catch (err) {
             console.error('Erro ao buscar histórico do episódio', ep.id, err);
           }

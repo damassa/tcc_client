@@ -14,8 +14,6 @@ import { toast, ToastContainer } from 'react-toastify';
  * @returns JSX.Element
  */
 const Login: React.FC = () => {
-  const [error, setError] = useState('');
-
   const [credential, setCredential] = useState<{ email: string; password: string }>({
     email: '',
     password: '',
@@ -63,12 +61,11 @@ const Login: React.FC = () => {
         }, 2000);
       } else {
         const text = await response.data.text();
-        setError(text || 'Falha no login.');
+        console.error(text);
       }
     } catch (error) {
       // Handle login error
 
-      setError('Falha no login. Cheque suas credenciais.');
       console.error('Login failed:', error);
     }
   };

@@ -212,7 +212,7 @@ const Home: React.FC = () => {
 
         <h3 className="text-2xl font-bold mt-10 mb-4">Séries Populares</h3>
         <div className="flex flex-wrap justify-center gap-6">
-          {seriesToShow.map((serie, index) => (
+          {seriesToShow.map((serie: SerieResponse, index: number) => (
             <motion.div
               key={serie.id}
               className="w-36 sm:w-40 md:w-44 lg:w-48 xl:w-56 2xl:w-100 gap-6 rounded-lg border border-zinc-700 shadow-md"

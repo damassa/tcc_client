@@ -6,6 +6,7 @@ import Loading from '../../components/Loading';
 import { Link } from 'react-router-dom';
 import { getCategories, getSeriesByCategory } from '../../api/CategoryApi';
 import { motion } from 'framer-motion';
+import { SerieResponse } from '../../types/serie';
 
 // import { Container } from './styles';
 
@@ -34,7 +35,7 @@ const Categories: React.FC = () => {
     if (!categories.length) return;
 
     const fetchSeriesFromCategory = async () => {
-      const data = {};
+      const data: { [key: number]: SerieResponse[] } = {};
       await Promise.all(
         categories.map(async (category) => {
           const series = await getSeriesByCategory(category.id);
@@ -67,7 +68,7 @@ const Categories: React.FC = () => {
             >
               <h1 className="mt-10 text-2xl w-full font-bold text-white">{category.name}</h1>
               {categoryWithSeries[category.id] &&
-                categoryWithSeries[category.id].map((serie, index) => (
+                categoryWithSeries[category.id].map((serie: SerieResponse, index: number) => (
                   <motion.div
                     key={serie.id}
                     className="w-36 sm:w-40 md:w-44 lg:w-48 gap-6 rounded-lg border border-zinc-700 shadow-md"

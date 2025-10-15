@@ -70,7 +70,6 @@ const Carousel: React.FC = () => {
           transition={{ duration: 0.3, delay: index * 0.05 }}
           whileHover={{ scale: 1.05 }}
           whileInView={{ opacity: 1, y: 0 }}
-          initial={{ opacity: 0, y: 20 }}
           viewport={{ once: true, amount: 0.2 }} // Revele o card ao rolar para ele (em 20% da altura)
         >
           <Link to={`/detail/${serie.id}`}>

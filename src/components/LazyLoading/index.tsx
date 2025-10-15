@@ -52,7 +52,7 @@ const LazySerieList: React.FC<Props> = ({ allSeries, perPage = 12 }) => {
   return (
     <>
       <div className="flex flex-wrap justify-center gap-6">
-        {seriesToRender.map((serie, index) => (
+        {seriesToRender.map((serie: SerieResponse, index: number) => (
           <motion.div
             key={serie.id}
             className="w-36 sm:w-40 md:w-44 lg:w-48 gap-6 rounded-lg border border-zinc-700 shadow-md"

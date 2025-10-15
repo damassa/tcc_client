@@ -1,7 +1,6 @@
 import React from 'react';
 import './style.css';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import api from '../../api/api';
 import axios from 'axios';
 
 const UpdatePassword: React.FC = () => {
@@ -33,7 +32,7 @@ const UpdatePassword: React.FC = () => {
       setTimeout(() => {
         navigate('/login');
       }, 2000);
-    } catch (error) {
+    } catch (e) {
       setMessage('Token inválido ou expirado. Por favor, tente novamente.');
     }
   };

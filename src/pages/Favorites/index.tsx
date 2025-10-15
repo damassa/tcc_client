@@ -55,7 +55,6 @@ const Favorites: React.FC = () => {
               transition={{ duration: 0.3, delay: index * 0.05 }}
               whileHover={{ scale: 1.05 }}
               whileInView={{ opacity: 1, y: 0 }}
-              initial={{ opacity: 0, y: 20 }}
               viewport={{ once: true, amount: 0.2 }}
             >
               <Link to={`/detail/${serie.id}`}>
@@ -72,9 +71,6 @@ const Favorites: React.FC = () => {
               </div>
             </motion.div>
           ))}
-        </div>
-        <div className="flex justify-center my-6">
-          <Button />
         </div>
       </main>
       <Footer />
