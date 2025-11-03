@@ -65,7 +65,9 @@ const SerieDetail: React.FC = () => {
         getEpisodesBySerieId(Number(id)),
       ]);
       setSerie(serieData);
-      setEpisodes(eps);
+
+      const orderedEpisodes = eps.sort((a, b) => a.id - b.id);
+      setEpisodes(orderedEpisodes);
 
       const user = JSON.parse(localStorage.getItem('user') || '{}');
       if (user.id) {
@@ -287,9 +289,10 @@ const SerieDetail: React.FC = () => {
             </div>
           ) : (
             <Slider {...sliderSettings}>
-              {episodes.map((episode) => {
+              {episodes.map((episode, index) => {
                 const pausedAt = episodeHistories.get(episode.id) || 0;
                 const hasProgress = pausedAt > 0;
+                const sequentialEpisode = index + 1;
                 return (
                   <div
                     key={episode.id}
@@ -298,7 +301,9 @@ const SerieDetail: React.FC = () => {
                   >
                     <div className="w-full h-[190px] bg-black flex flex-col items-center justify-center relative group">
                       <p className="text-white font-bold group-hover:text-yellow-300 transition">
-                        {hasProgress ? '▶ Continuar Episódio' : '▶ Assistir Episódio'}
+                        {hasProgress
+                          ? '▶ Continuar Episódio'
+                          : `Assistir Episódio ${sequentialEpisode}`}
                       </p>
                       {hasProgress && (
                         <span className="mt-2 text-xs text-gray-300">
