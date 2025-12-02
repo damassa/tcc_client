@@ -6,11 +6,11 @@ export const editUser = async (user: { name: string; newPassword?: string }) => 
   try {
     console.log('Dados sendo enviados:', user);
 
-    const response = await fetch(`http://localhost:8080/api/v1/users/edit-user`, {
+    const response = await fetch(`https://tccserver-f1d0375900a5.herokuapp.com`, {
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
-        'Access-Control-Allow-Origin': 'http://localhost:3000',
+        'Access-Control-Allow-Origin': 'https://worldoftokusatsu.netlify.app',
       },
       method: 'PATCH',
       body: JSON.stringify({
