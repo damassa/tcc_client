@@ -46,7 +46,7 @@ const Login: React.FC = () => {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
-          'Access-Control-Allow-Origin': 'http://localhost:3000',
+          'Access-Control-Allow-Origin': 'https://worldoftokusatsu.netlify.app',
         },
       });
       const user = await localApi.get('/api/v1/users/me');

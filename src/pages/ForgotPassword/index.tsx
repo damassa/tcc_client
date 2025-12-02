@@ -14,7 +14,7 @@ const ForgotPassword: React.FC = () => {
     e.preventDefault();
 
     try {
-      await axios.post('http://localhost:8080/api/v1/users/forgot-password', null, {
+      await axios.post('https://tccserver-f1d0375900a5.herokuapp.com/api/v1/users/forgot-password', null, {
         params: { email },
       });
       setEmailSent(true);
