@@ -18,12 +18,12 @@ const ConfirmEmail: React.FC = () => {
       return;
     }
 
-    // fetch(`https://tccserver-f1d0375900a5.herokuapp.com/confirm-email?token=${token}`, {
-    //   method: 'GET',
-    // })
-    fetch(`localhost:8080/confirm-email?token=${token}`, {
+    fetch(`https://tccserver-f1d0375900a5.herokuapp.com/confirm-email?token=${token}`, {
       method: 'GET',
     })
+    // fetch(`localhost:8080/confirm-email?token=${token}`, {
+    //   method: 'GET',
+    // })
       .then((res) => {
         if (res.ok) {
           setMessage('E-mail confirmado com sucesso! Você já pode fazer login.');

@@ -39,7 +39,7 @@ const Register: React.FC = () => {
     }
 
     try {
-      const response = await fetch('https://worldoftokusatsu.netlify.app/api/v1/users/register', {
+      const response = await fetch('https://tccserver-f1d0375900a5.herokuapp.com//api/v1/users/register', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

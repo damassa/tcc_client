@@ -6,7 +6,7 @@ export const editUser = async (user: { name: string; newPassword?: string }) => 
   try {
     console.log('Dados sendo enviados:', user);
 
-    const response = await fetch(`https://tccserver-f1d0375900a5.herokuapp.com`, {
+    const response = await fetch(`https://tccserver-f1d0375900a5.herokuapp.com/api/v1/users/edit-user`, {
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
