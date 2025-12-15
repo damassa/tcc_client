@@ -100,7 +100,9 @@ const Login: React.FC = () => {
       } else if (status) {
         // Trata outros erros HTTP conhecidos (ex: 500 Server Error)
         toast.error(`Erro no servidor: ${status}. Tente novamente mais tarde.`);
-        console.error('Login failed (HTTP Error):', error.response.data);
+        if (axios.isAxiosError(error)) {
+          console.error('Login failed (HTTP Error):', error.response?.data);
+        }
       } else {
         // Trata erros que não são de resposta HTTP (ex: falha de rede)
         toast.error('Falha na conexão. Verifique sua rede.');
