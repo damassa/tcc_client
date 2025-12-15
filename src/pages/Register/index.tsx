@@ -39,13 +39,16 @@ const Register: React.FC = () => {
     }
 
     try {
-      const response = await fetch('https://tccserver-f1d0375900a5.herokuapp.com//api/v1/users/register', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
+      const response = await fetch(
+        'https://tccserver-f1d0375900a5.herokuapp.com/api/v1/users/register',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ name, email, senha }),
         },
-        body: JSON.stringify({ name, email, senha }),
-      });
+      );
 
       if (response.status === 201) {
         toast.success('Cadastro realizado com sucesso. Verifique seu e-mail para confirmação.');
